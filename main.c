@@ -9,19 +9,22 @@ int main(int argc, char** argv)
 {
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
 
-    atributo* unAtributo = (atributo*) malloc(sizeof(atributo));
+    variant* unAtributo = (variant*) malloc(sizeof(variant));
     inicializar(unJson, unAtributo);
-    char* clave= "nombre: ";
-    char* valor= "matias";
+    char* clave= "nombre:";
+    void* valor= "matias";
+    unsigned largo = strlen(valor)+1;
 
-    asignarAtributo(unAtributo, clave, valor);
+    setVariant(unAtributo, clave, valor, largo);
     asignarJson(unJson, unAtributo);
 
-    mostrarPorConsola(unJson);
     printf("%i\n", sizeof(unAtributo));
     printf("%i\n", sizeof(unJson));
-    //guardarArchivo(unJson);
-    free(unAtributo);
-    free(unJson);
+
+    printf("%s %s\n", getStringClave(unAtributo), getStringValor(unAtributo));
+
+    guardarArchivo(unJson);
+
+    liberar(unJson);
     return 0;
 }
