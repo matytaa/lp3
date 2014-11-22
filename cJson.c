@@ -8,48 +8,82 @@ void crearJson(cJson* unJson){
 
 }
 
-void inicializar(cJson* nuevoJson, atributo* unAtributo){
-    nuevoJson->actual= NULL;
-    nuevoJson->siguiente= NULL;
-    unAtributo->clave=NULL;
-    unAtributo->valor=NULL;
-}
-
-void mostrarPorConsola(cJson* unJson){
-
-    mostrarAtributo(unJson->actual);
-
-}
-
 void guardarArchivo(cJson* cJson){
     FILE *archivoJson;
-    atributo* unAtributo = cJson->actual;
+    variant* unAtributo = cJson->actual;
 
  	archivoJson = fopen ( "archivoJson.txt", "w" );
 
 
-    fprintf(archivoJson, "%s%s\n",unAtributo->clave, unAtributo->valor);
+    fprintf(archivoJson, "%s%p\n",unAtributo->clave, unAtributo->valor);
 
  	fclose (archivoJson);
 
 }
 
-void asignarJson(cJson* unJson, atributo* unAtributo){
+void asignarJson(cJson* unJson, variant* unAtributo){
 
-    unJson->actual = (atributo*) malloc(sizeof(atributo));
+    unJson->actual = (variant*) malloc(sizeof(variant));
     memcpy(unJson->actual, unAtributo, sizeof(unAtributo));
 }
 
-void asignarAtributo (atributo* unAtributo, char* clave, char* valor){
+void inicializar(cJson* nuevoJson, variant* unAtributo){
+    nuevoJson->actual= NULL;
+    nuevoJson->siguiente= NULL;
 
-    unAtributo->clave = (char*) malloc(strlen(clave)+1);
-    memcpy(unAtributo->clave, clave, strlen(clave)+1);
-
-    unAtributo->valor = (char*) malloc(strlen(valor)+1);
-    memcpy(unAtributo->valor, valor, strlen(valor)+1);
+    unAtributo->clave= NULL;
+    unAtributo->valor= NULL;
+    unAtributo->largo= 0;
 }
 
-void mostrarAtributo(atributo* unAtributo){
-    printf("%s",unAtributo->clave);
-    printf("%s\n", unAtributo->valor);
+void liberarVariant(variant* variant) {
+    variant->largo = 0;
+    if (variant->clave)
+        free(variant->clave);
+    variant->clave= NULL;
+    if ( variant->valor )
+        free( variant->valor );
+    variant->valor = NULL;
+}
+
+void liberar(cJson* unJson){
+    if(unJson->actual)
+        liberarVariant(unJson->actual);
+    unJson->actual= NULL;
+
+    if(unJson->siguiente)
+        liberarVariant(unJson->siguiente);
+    unJson->siguiente= NULL;
+}
+
+void setVariant( variant* v, char* clave, void* valor, unsigned largo) {
+    v->largo = largo;
+
+    if(v->clave)
+    free(v->clave);
+    v->clave = (char*) malloc( strlen( clave )+1);
+    memcpy( v->clave, clave, strlen( clave )+1);
+
+    if ( v->valor )
+    free( v->valor );
+    v->valor = malloc( largo );
+    memcpy( v->valor, valor, largo);
+}
+
+int getInteger(variant* v) {
+    int resultado = *(int*)v->valor;
+    return resultado;
+}
+
+double getDouble(variant* v) {
+    double resultado = *(double*)v->valor;
+    return resultado;
+}
+
+char* getStringValor(variant* v) {
+    return (char*)v->valor;
+}
+
+char* getStringClave(variant* v) {
+    return (char*)v->clave;
 }
