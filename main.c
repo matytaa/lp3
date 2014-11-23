@@ -5,26 +5,29 @@
 #include "cJSON.c"
 
 
+void crearUnJsonDeUnAtributo();
+
 int main(int argc, char** argv)
 {
+    crearUnJsonDeUnAtributo();
+    return 0;
+}
+
+
+void crearUnJsonDeUnAtributo(){
+
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
 
     variant* unAtributo = (variant*) malloc(sizeof(variant));
     inicializar(unJson, unAtributo);
     char* clave= "nombre:";
-    void* valor= "matias";
+    char* valor= "matias";
     unsigned largo = strlen(valor)+1;
+    unsigned largoClave = strlen(clave)+1;
 
-    setVariant(unAtributo, clave, valor, largo);
+    setVariant(unAtributo, clave, valor, largoClave, largo);
     asignarJson(unJson, unAtributo);
-
-    printf("%i\n", sizeof(unAtributo));
-    printf("%i\n", sizeof(unJson));
-
-    printf("%s %s\n", getStringClave(unAtributo), getStringValor(unAtributo));
-
     guardarArchivo(unJson);
 
     liberar(unJson);
-    return 0;
 }
