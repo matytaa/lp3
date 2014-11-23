@@ -9,7 +9,7 @@
 
 typedef struct _Variant {
     void* valor; // Datos contenidos por el variant
-    char* clave; // Tipo de dato contenido en el variant
+    void* clave; // Tipo de dato contenido en el variant
     unsigned largo; // Cantidad de de bytes apuntados por data
 } variant;
 
@@ -34,7 +34,7 @@ void liberarVariant(variant*);
 *
 * @precondicion La estructura variant esta inicializada
 */
-void setVariant( variant*, char* clave, void* valor, unsigned largo);
+variant* setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo);
 
 /***
 * Descargo un entero como si el variant tuviera almacenado
@@ -74,7 +74,7 @@ char* getStringValor( variant*);
 *
 * @precondicion La estructura variant esta inicializada
 */
-char* getStringClave(variant* v);
+char* getStringClave(variant* );
 
 /** Pre:    recibe un puntero a una estructura cJson alocada en el Stack vacia
     Post:   invoca a la funcion Inicializar
@@ -87,6 +87,7 @@ void crearJson( cJson*);
             dependiendo del caso
 **/
 void inicializar( cJson*, variant*);
+
 
 /** Pre:    recibe un puntero a una estructura cJson alocado en el Stack inicializada
     Post:   guarda en un archivo destino los atributos de la estructura
