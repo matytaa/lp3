@@ -3,6 +3,24 @@
 #include <string.h>
 #include "cJSON.h"
 
+int getInteger(variant* v) {
+    int resultado = *(int*)v->valor;
+    return resultado;
+}
+
+double getDouble(variant* v) {
+    double resultado = *(double*)v->valor;
+    return resultado;
+}
+
+char* getStringValor(variant* v) {
+    return (char*)v->valor;
+}
+
+char* getStringClave(variant* v) {
+    return (char*)v->clave;
+}
+
 void crearJson(cJson* unJson){
     unJson = (cJson*) malloc(sizeof(cJson));
 
@@ -10,21 +28,25 @@ void crearJson(cJson* unJson){
 
 void guardarArchivo(cJson* cJson){
     FILE *archivoJson;
-    variant* unAtributo = cJson->actual;
+    //variant* unAtributo = cJson->actual;
+
+    printf("%s  ", getStringClave(cJson->actual));
+    printf("%s\n", getStringValor(cJson->actual));
 
  	archivoJson = fopen ( "archivoJson.txt", "w" );
 
 
-    fprintf(archivoJson, "%s%p\n",unAtributo->clave, unAtributo->valor);
+    fprintf(archivoJson, "%s %s\n", getStringClave(cJson->actual),getStringValor(cJson->actual));
 
  	fclose (archivoJson);
-
+    //liberarVariant(unAtributo);
 }
 
 void asignarJson(cJson* unJson, variant* unAtributo){
 
-    unJson->actual = (variant*) malloc(sizeof(variant));
-    memcpy(unJson->actual, unAtributo, sizeof(unAtributo));
+    unsigned tamanio = strlen(getStringClave(unAtributo))+ unAtributo->largo;
+    unJson->actual = (variant*) malloc(tamanio);
+    memcpy(unJson->actual, unAtributo, tamanio);
 }
 
 void inicializar(cJson* nuevoJson, variant* unAtributo){
@@ -56,34 +78,25 @@ void liberar(cJson* unJson){
     unJson->siguiente= NULL;
 }
 
-void setVariant( variant* v, char* clave, void* valor, unsigned largo) {
+variant* setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo) {
     v->largo = largo;
 
-    if(v->clave)
-    free(v->clave);
-    v->clave = (char*) malloc( strlen( clave )+1);
-    memcpy( v->clave, clave, strlen( clave )+1);
-
-    if ( v->valor )
-    free( v->valor );
+    if ( v->valor ){
+        free( v->valor );
+    }
     v->valor = malloc( largo );
     memcpy( v->valor, valor, largo);
-}
 
-int getInteger(variant* v) {
-    int resultado = *(int*)v->valor;
-    return resultado;
-}
+    if(v->clave){
+        free(v->clave);
+    }
+    v->clave = malloc(largoClave);
+    printf("la clave: %s, %s\n",((char*)v->clave), ((char*)unaClave));
 
-double getDouble(variant* v) {
-    double resultado = *(double*)v->valor;
-    return resultado;
-}
+    memcpy( v->clave, unaClave, largoClave);
 
-char* getStringValor(variant* v) {
-    return (char*)v->valor;
-}
+    printf("la clave: %s, %s\n",((char*)v->clave), ((char*)unaClave));
 
-char* getStringClave(variant* v) {
-    return (char*)v->clave;
+    return v;
+
 }
