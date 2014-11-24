@@ -11,11 +11,12 @@ typedef struct _Variant {
     void* valor; // Datos contenidos por el variant
     void* clave; // Tipo de dato contenido en el variant
     unsigned largo; // Cantidad de de bytes apuntados por data
+    unsigned tamanio; //memoria utilizada por la estructura
 } variant;
 
 typedef struct _cJson{
     variant* actual;
-    variant* siguiente;
+    variant** arrayAt;
 }cJson;
 /***
 * Dado un puntero a variant libero memoria (si es que está
@@ -24,6 +25,8 @@ typedef struct _cJson{
 * @precondicion La estructura variant esta inicializada
 */
 void liberarVariant(variant*);
+
+void liberarArrayVariant(variant**);
 
 /***
 * Set datos almacenados por el variant
@@ -34,7 +37,9 @@ void liberarVariant(variant*);
 *
 * @precondicion La estructura variant esta inicializada
 */
-variant* setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo);
+void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo);
+
+void concatenarAtributo(variant*, void* claveNombre, void* valorNombre, unsigned largoClaveNombre, unsigned largoValorNombre);
 
 /***
 * Descargo un entero como si el variant tuviera almacenado
@@ -83,10 +88,14 @@ char* getStringClave(variant* );
 void crearJson( cJson*);
 
 /** Pre:    recibe un puntero a una estructura cJson alocada en el Stack vacia
-    Post:   inicializa cada uno de los atributos de la estructura en 0 o NULL
-            dependiendo del caso
+    Post:   inicializa cada uno de los atributos de la estructura NULL
 **/
 void inicializar( cJson*, variant*);
+
+/** Pre:    recibe un puntero a una estructura variant alocada en el Stack vacia
+    Post:   inicializa cada uno de los atributos de la estructura en NULL
+**/
+void inicializarAtributo( variant* unAtributo);
 
 
 /** Pre:    recibe un puntero a una estructura cJson alocado en el Stack inicializada
@@ -100,6 +109,8 @@ void guardarArchivo(cJson*);
 void liberar( cJson*);
 
 /** Post:    asigna un nuevo valor a la estructura cJson **/
-void asignarJson( cJson*, variant* );
+void asignarJson( cJson*, variant**, unsigned tamanio );
+
+void reasicnarJson(cJson*, variant*, unsigned tamanio);
 
 #endif // CJSON_H_INCLUDED
