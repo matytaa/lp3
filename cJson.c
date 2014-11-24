@@ -26,36 +26,56 @@ void crearJson(cJson* unJson){
 
 }
 
-void guardarArchivo(cJson* cJson){
+/** quitar numeros magicos, automatizar **/
+void guardarArchivo(cJson* unJson){
     FILE *archivoJson;
-    //variant* unAtributo = cJson->actual;
 
-    printf("%s  ", getStringClave(cJson->actual));
-    printf("%s\n", getStringValor(cJson->actual));
-
- 	archivoJson = fopen ( "archivoJson.txt", "w" );
+ 	archivoJson = fopen ( "archivoJson.txt", "a" );
 
 
-    fprintf(archivoJson, "%s %s\n", getStringClave(cJson->actual),getStringValor(cJson->actual));
+    fprintf(archivoJson, "%s %s\n", getStringClave(*(unJson->arrayAt)),getStringValor(*(unJson->arrayAt)));
+    fprintf(archivoJson, "%s %i\n", getStringClave(*(unJson->arrayAt+1)),getInteger(*(unJson->arrayAt+1)));
+    fprintf(archivoJson, "%s %s\n", getStringClave(*(unJson->arrayAt+2)),getStringValor(*(unJson->arrayAt+2)));
 
  	fclose (archivoJson);
-    //liberarVariant(unAtributo);
 }
 
-void asignarJson(cJson* unJson, variant* unAtributo){
 
-    unsigned tamanio = strlen(getStringClave(unAtributo))+ unAtributo->largo;
-    unJson->actual = (variant*) malloc(tamanio);
-    memcpy(unJson->actual, unAtributo, tamanio);
-}
-
-void inicializar(cJson* nuevoJson, variant* unAtributo){
+void inicializarJson(cJson* nuevoJson){
     nuevoJson->actual= NULL;
-    nuevoJson->siguiente= NULL;
+    nuevoJson->arrayAt= NULL;
+}
 
+
+/** Aca hay problemas **/
+void inicializarAtributo( variant* unAtributo){
     unAtributo->clave= NULL;
     unAtributo->valor= NULL;
     unAtributo->largo= 0;
+}
+
+/** quitar numeros magicos, automatizar **/
+void asignarJson(cJson* unJson, variant** unAtributo, unsigned tamanio){
+    unJson->arrayAt = (variant**) malloc(tamanio);
+    memcpy(unJson->arrayAt, unAtributo, tamanio);
+    printf("haber 1 %s \n", getStringClave(*(unJson->arrayAt)));
+    printf("haber 2 %s \n", getStringClave(*(unJson->arrayAt+2)));
+}
+
+/** hay que usarlo si queremos agregar un nuevo atributo, no se si anda **/
+void reasicnarJson(cJson* unJson, variant* unAtributo, unsigned tamanio){
+    unsigned aumentar = unJson->actual->largo + tamanio;
+    cJson* otroJson= (cJson*) realloc(unJson, aumentar);
+    liberar(unJson);
+    unJson = otroJson;
+    int i;
+    for (i = 0; i<aumentar; i++){
+        if(!((unJson+i))){
+            asignarJson(&unJson[i], &unAtributo, tamanio);
+            return;
+        }
+    }
+
 }
 
 void liberarVariant(variant* variant) {
@@ -69,18 +89,21 @@ void liberarVariant(variant* variant) {
 }
 
 void liberar(cJson* unJson){
-    if(unJson->actual)
-        liberarVariant(unJson->actual);
-    unJson->actual= NULL;
+    if(unJson->arrayAt)
+        liberarArrayVariant(unJson->arrayAt);
+    unJson->arrayAt= NULL;
 
-    if(unJson->siguiente)
-        liberarVariant(unJson->siguiente);
-    unJson->siguiente= NULL;
 }
 
-variant* setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo) {
-    v->largo = largo;
+/** quitar numeros magicos, automatizar para que llame a liberarVariant **/
+void liberarArrayVariant(variant** arrayAt){
+    if(arrayAt)
+        liberarVariant(*(arrayAt));
+}
 
+void setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo) {
+    v->largo = largo;
+    v->tamanio = largo + largoClave;
     if ( v->valor ){
         free( v->valor );
     }
@@ -90,13 +113,9 @@ variant* setVariant( variant* v, void* unaClave, void* valor, unsigned largoClav
     if(v->clave){
         free(v->clave);
     }
-    v->clave = malloc(largoClave);
-    printf("la clave: %s, %s\n",((char*)v->clave), ((char*)unaClave));
 
+    v->clave = malloc(largoClave);
     memcpy( v->clave, unaClave, largoClave);
 
-    printf("la clave: %s, %s\n",((char*)v->clave), ((char*)unaClave));
-
-    return v;
-
+    printf("%s %s\n", getStringClave(v), getStringValor(v));
 }
