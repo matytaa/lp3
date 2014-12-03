@@ -8,6 +8,11 @@ int getInteger(variant* v) {
     return resultado;
 }
 
+float getFlotante(variant* v) {
+    float resultado = *(float*)v->valor;
+    return resultado;
+}
+
 double getDouble(variant* v) {
     double resultado = *(double*)v->valor;
     return resultado;
@@ -26,23 +31,56 @@ void crearJson(cJson* unJson){
 
 }
 
-/** quitar numeros magicos, automatizar **/
-void guardarArchivo(cJson* unJson){
+void mostrarPorConsola(cJson* unJson, unsigned desplazamiento){
+
+    printf("%s ", getStringClave((unJson->arrayAt[desplazamiento])));
+    unsigned tipo = (unJson->arrayAt[desplazamiento]->tipo);
+    switch(tipo){
+        case ventero:
+        printf("%i \n",getInteger(*(unJson->arrayAt+desplazamiento)));
+        break;
+        case vflotante:
+        printf("%f \n",getDouble(*(unJson->arrayAt+desplazamiento)));
+        break;
+        case vcadena:
+        printf("%s \n",getStringValor(*(unJson->arrayAt+desplazamiento)));
+        break;
+        default:
+        printf("%f \n",getDouble(*(unJson->arrayAt+desplazamiento)));
+
+    }
+}
+
+void guardarArchivo(cJson* unJson, unsigned desplazamiento){
     FILE *archivoJson;
 
  	archivoJson = fopen ( "archivoJson.txt", "a" );
 
 
-    fprintf(archivoJson, "%s %s\n", getStringClave(*(unJson->arrayAt)),getStringValor(*(unJson->arrayAt)));
-    fprintf(archivoJson, "%s %i\n", getStringClave(*(unJson->arrayAt+1)),getInteger(*(unJson->arrayAt+1)));
-    fprintf(archivoJson, "%s %s\n", getStringClave(*(unJson->arrayAt+2)),getStringValor(*(unJson->arrayAt+2)));
+    fprintf(archivoJson, "%s ", getStringClave((unJson->arrayAt[desplazamiento])));
+
+
+    unsigned tipo = (unJson->arrayAt[desplazamiento]->tipo);
+    switch(tipo){
+        case ventero:
+        fprintf(archivoJson, "%i \n",getInteger(*(unJson->arrayAt+desplazamiento)));
+        break;
+        case vflotante:
+        fprintf(archivoJson, "%f \n",getDouble(*(unJson->arrayAt+desplazamiento)));
+        break;
+        case vcadena:
+        fprintf(archivoJson, "%s \n",getStringValor(*(unJson->arrayAt+desplazamiento)));
+        break;
+        default:
+        fprintf(archivoJson, "%f \n",getDouble(*(unJson->arrayAt+desplazamiento)));
+
+    }
 
  	fclose (archivoJson);
 }
 
 
 void inicializarJson(cJson* nuevoJson){
-    nuevoJson->actual= NULL;
     nuevoJson->arrayAt= NULL;
 }
 
@@ -52,34 +90,18 @@ void inicializarAtributo( variant* unAtributo){
     unAtributo->clave= NULL;
     unAtributo->valor= NULL;
     unAtributo->largo= 0;
+    unAtributo->tipo = 0;
 }
 
 /** quitar numeros magicos, automatizar **/
 void asignarJson(cJson* unJson, variant** unAtributo, unsigned tamanio){
     unJson->arrayAt = (variant**) malloc(tamanio);
     memcpy(unJson->arrayAt, unAtributo, tamanio);
-    printf("haber 1 %s \n", getStringClave(*(unJson->arrayAt)));
-    printf("haber 2 %s \n", getStringClave(*(unJson->arrayAt+2)));
-}
-
-/** hay que usarlo si queremos agregar un nuevo atributo, no se si anda **/
-void reasicnarJson(cJson* unJson, variant* unAtributo, unsigned tamanio){
-    unsigned aumentar = unJson->actual->largo + tamanio;
-    cJson* otroJson= (cJson*) realloc(unJson, aumentar);
-    liberar(unJson);
-    unJson = otroJson;
-    int i;
-    for (i = 0; i<aumentar; i++){
-        if(!((unJson+i))){
-            asignarJson(&unJson[i], &unAtributo, tamanio);
-            return;
-        }
-    }
-
 }
 
 void liberarVariant(variant* variant) {
     variant->largo = 0;
+    variant->tipo = 0;
     if (variant->clave)
         free(variant->clave);
     variant->clave= NULL;
@@ -95,15 +117,15 @@ void liberar(cJson* unJson){
 
 }
 
-/** quitar numeros magicos, automatizar para que llame a liberarVariant **/
 void liberarArrayVariant(variant** arrayAt){
     if(arrayAt)
         liberarVariant(*(arrayAt));
 }
 
-void setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo) {
+void setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo, unsigned tipo) {
     v->largo = largo;
     v->tamanio = largo + largoClave;
+    v->tipo = tipo;
     if ( v->valor ){
         free( v->valor );
     }
@@ -116,6 +138,4 @@ void setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, u
 
     v->clave = malloc(largoClave);
     memcpy( v->clave, unaClave, largoClave);
-
-    printf("%s %s\n", getStringClave(v), getStringValor(v));
 }
