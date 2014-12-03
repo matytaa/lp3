@@ -1,10 +1,18 @@
 #ifndef CJSON_H_INCLUDED
 #define CJSON_H_INCLUDED
 
-
 /** Definición de la estructura Json en C
 **/
+#define vfalse 0
+#define vtrue 1
 
+#define vnull 2
+#define ventero 3
+
+#define vflotante 4
+#define vcadena 5
+
+#define vlista 6
 
 
 typedef struct _Variant {
@@ -12,71 +20,59 @@ typedef struct _Variant {
     void* clave; // Tipo de dato contenido en el variant
     unsigned largo; // Cantidad de de bytes apuntados por data
     unsigned tamanio; //memoria utilizada por la estructura
+    unsigned tipo;
+
 } variant;
 
 typedef struct _cJson{
-    variant* actual;
     variant** arrayAt;
 }cJson;
-/***
-* Dado un puntero a variant libero memoria (si es que está
-* utilizando)
-*
-* @precondicion La estructura variant esta inicializada
-*/
-void liberarVariant(variant*);
-
-void liberarArrayVariant(variant**);
 
 /***
-* Set datos almacenados por el variant
-*
+* post: Almacenar los datos en el variant
 * @param v Variant que quiero configurar
 * @param data Puntero al comienzo del entero
 * @param largo Cantidad de bytes que ocupa un entero
-*
 * @precondicion La estructura variant esta inicializada
 */
-void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo);
+void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo, unsigned tipo);
 
-void concatenarAtributo(variant*, void* claveNombre, void* valorNombre, unsigned largoClaveNombre, unsigned largoValorNombre);
+
+/** Post:    asigna un nuevo valor a la estructura cJson **/
+void asignarJson( cJson*, variant**, unsigned tamanio );
 
 /***
-* Descargo un entero como si el variant tuviera almacenado
-* un entero
-*
+* post: retorno un double que contiene el valor del atributo
 * @param v Variant que quiero configurar
-*
 * @precondicion La estructura variant esta inicializada
 */
 int getInteger( variant*);
 
+
 /***
-* Descargo un entero como si el variant tuviera almacenado
-* un entero
-*
+* post: retorno un float que contiene el valor del atributo
 * @param v Variant que quiero configurar
-*
+* @precondicion La estructura variant esta inicializada
+*/
+float getFlotante( variant* );
+
+/***
+* post: retorno un double que contiene el valor del atributo
+* @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
 */
 double getDouble( variant*);
 
 /***
-* Descargo un puntero a string como si el variant tuviera almacenado
-* un entero
-*
+* post: retorno un char* que contiene el valor del atributo
 * @param v Variant que quiero configurar
-*
 * @precondicion La estructura variant esta inicializada
 */
 char* getStringValor( variant*);
 
 /***
-* Descargo un puntero a string como si el variant tuviera almacenado
-* un entero
-*
+* post: retorno un char* que contiene la clave
 * @param v Variant que quiero configurar
-*
 * @precondicion La estructura variant esta inicializada
 */
 char* getStringClave(variant* );
@@ -98,19 +94,32 @@ void inicializar( cJson*, variant*);
 void inicializarAtributo( variant* unAtributo);
 
 
-/** Pre:    recibe un puntero a una estructura cJson alocado en el Stack inicializada
+/** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   guarda en un archivo destino los atributos de la estructura
 **/
-void guardarArchivo(cJson*);
+void guardarArchivo(cJson*, unsigned);
+
+/** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
+    Post:   imprime por pantalla los atributos de la estructura
+**/
+void mostrarPorConsola(cJson*, unsigned);
+
+/***
+* Dado un puntero a variant libero memoria (si es que está
+* utilizando)
+* @precondicion La estructura variant esta inicializada
+*/
+void liberarVariant(variant*);
+
+/**
+* post: libera la memoria utilizada por el array de variant
+* @param variant**
+**/
+void liberarArrayVariant(variant**);
 
 /**
     Post:   libera el espacio ocupado en memoria por la estructura cJson
 **/
 void liberar( cJson*);
-
-/** Post:    asigna un nuevo valor a la estructura cJson **/
-void asignarJson( cJson*, variant**, unsigned tamanio );
-
-void reasicnarJson(cJson*, variant*, unsigned tamanio);
 
 #endif // CJSON_H_INCLUDED
