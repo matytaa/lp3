@@ -9,7 +9,7 @@ void crearJsonDeVariosAtributos();
 
 int main(int argc, char** argv)
 {
-    //crearUnJsonDeUnAtributo();
+    crearUnJsonDeUnAtributo();
     crearJsonDeVariosAtributos();
     return 0;
 }
@@ -18,39 +18,53 @@ int main(int argc, char** argv)
 void crearUnJsonDeUnAtributo(){
 
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
-
-    variant** unAtributo = (variant**) malloc(sizeof(variant));
     inicializarJson(unJson);
-    inicializarAtributo(*(unAtributo));
+
+    variant* unAtributo = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(unAtributo);
+
     char* clave= "escuderia:";
     char* valor= "ferrari";
     unsigned largo = strlen(valor)+1;
     unsigned largoClave = strlen(clave)+1;
     unsigned tamanio = largo + largoClave;
+    unsigned tipo = 5;
 
-    setVariant(*(unAtributo), clave, valor, largoClave, largo);
-    asignarJson(unJson, unAtributo, tamanio);
-    guardarArchivo(unJson);
+    setVariant(unAtributo, clave, valor, largoClave, largo, tipo);
+
+
+
+    asignarJson(unJson, &unAtributo, tamanio);
+    unsigned desplazamiento = 0;
+    guardarArchivo(unJson, desplazamiento);
+    mostrarPorConsola(unJson, desplazamiento);
 
     liberar(unJson);
 }
 
 void crearJsonDeVariosAtributos(){
+
+    /** variant 1 **/
     char claveNombre[] = "nombre:";
     char valorNombre[] = "matias";
     unsigned largoClaveNombre = strlen(claveNombre) +1;
     unsigned largoValorNombre = strlen(valorNombre) +1;
+    unsigned tipoNombre = 5;
 
+    /** variant 2 **/
     char claveEdad[] = "edad: ";
     unsigned edad= 23;
     void* valorEdad= &edad;
     unsigned largoClaveEdad = strlen(claveEdad) +1;
     unsigned largoValorEdad= sizeof(unsigned);
+    unsigned tipoEdad = 3;
 
+    /** variant 3 **/
     char claveDomicilio[] = "domicilio:";
     char valorDomicilio[] = "calle falsa 123";
     unsigned largoClaveDomicilio = strlen(claveDomicilio) +1;
     unsigned largoValorDomicilio = strlen(valorDomicilio) +1;
+    unsigned tipoDomicilio = 5;
 
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
     inicializarJson(unJson);
@@ -64,57 +78,38 @@ void crearJsonDeVariosAtributos(){
     variant* atributoDomicilio = (variant*) malloc(sizeof(variant));
     inicializarAtributo(atributoDomicilio);
 
-    setVariant(atributoNombre, claveNombre, valorNombre, largoClaveNombre, largoValorNombre);
-    setVariant(atributoEdad, claveEdad, valorEdad, largoClaveEdad, largoValorEdad);
-    setVariant(atributoDomicilio, claveDomicilio, valorDomicilio, largoClaveDomicilio, largoValorDomicilio);
+    setVariant(atributoNombre, claveNombre, valorNombre, largoClaveNombre, largoValorNombre, tipoNombre);
+    setVariant(atributoEdad, claveEdad, valorEdad, largoClaveEdad, largoValorEdad, tipoEdad);
+    setVariant(atributoDomicilio, claveDomicilio, valorDomicilio, largoClaveDomicilio, largoValorDomicilio, tipoDomicilio);
 
     unsigned tamanioNombre = strlen(getStringClave(atributoNombre))+ atributoNombre->largo;
     unsigned tamanioEdad = strlen(getStringClave(atributoEdad))+ atributoEdad->largo;
     unsigned tamanioDomicilio =  strlen(getStringClave(atributoDomicilio))+ atributoDomicilio->largo;
 
     unsigned tamanioTotal = tamanioDomicilio + tamanioEdad + tamanioNombre;
-    /** esto anda
-
-    variant* atributos = (variant*)malloc(tamanioTotal);
-    inicializarAtributo(atributos);
-
-    atributos = atributoNombre,atributoEdad,atributoDomicilio;
-    asignarJson(unJson, atributos, tamanioTotal);
-    **/
 
     variant** arrayAt;
     arrayAt = (variant**) malloc(tamanioNombre);
     *(arrayAt) = atributoNombre;
 
-    *(arrayAt+1) = (variant*) malloc(tamanioEdad);
-    arrayAt[1] = atributoEdad;
+    unsigned posicion = 1;
+    *(arrayAt+posicion) = (variant*) malloc(tamanioEdad);
+    arrayAt[posicion] = atributoEdad;
 
-    arrayAt[2] = (variant*) malloc(tamanioDomicilio);
-    arrayAt[2] = atributoDomicilio;
-
-    printf("1 %s \n", getStringClave(*(arrayAt)));
-    printf("2 %s \n", getStringClave(*(arrayAt+1)));
-    printf("3 %s \n", getStringClave(*(arrayAt+2)));
-
+    posicion++;
+    arrayAt[posicion] = (variant*) malloc(tamanioDomicilio);
+    arrayAt[posicion] = atributoDomicilio;
 
     asignarJson(unJson, arrayAt, tamanioTotal);
-    guardarArchivo(unJson);
 
+    unsigned desplazamiento =0;
+    for(desplazamiento=0; desplazamiento<3; desplazamiento++){
+        guardarArchivo(unJson, desplazamiento);
+    }
 
-    //asignarJson(unJson, (variant*)arrayAt, tamanioTotal);
-
-    //printf("puntero %p \n", unJson->actual);
-
-//    arrayJson[0] = atributoDomicilio;
-
-
-    //asignarJson(unJson, atributoDomicilio, tamanioDomicilio);
-    //reasicnarJson(unJson, atributoNombre, tamanioNombre);
-
-    //variant at2 = *(unJson+1)->actual;
-    //printf("algo %s \n", getStringValor(at));
-//    printf("%s \n", getStringValor(&at2));
-
-    //guardarArchivo(unJson);
-
+    desplazamiento =0;
+    for(desplazamiento=0; desplazamiento<3; desplazamiento++){
+        mostrarPorConsola(unJson, desplazamiento);
+    }
+    liberar(unJson);
 }
