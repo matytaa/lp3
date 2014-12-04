@@ -12,7 +12,9 @@
 #define vflotante 4
 #define vcadena 5
 
-#define vlista 6
+#define vlistaInt 6
+#define vlistaDouble 7
+#define vlistaChar 8
 
 
 typedef struct _Variant {
@@ -25,6 +27,7 @@ typedef struct _Variant {
 } variant;
 
 typedef struct _cJson{
+    unsigned tamanioJson;
     variant** arrayAt;
 }cJson;
 
@@ -48,6 +51,7 @@ void asignarJson( cJson*, variant**, unsigned tamanio );
 */
 int getInteger( variant*);
 
+void* getLista (variant* v);
 
 /***
 * post: retorno un float que contiene el valor del atributo
@@ -102,7 +106,11 @@ void guardarArchivo(cJson*, unsigned);
 /** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   imprime por pantalla los atributos de la estructura
 **/
-void mostrarPorConsola(cJson*, unsigned);
+void mostrarPorConsola(cJson*, unsigned, unsigned);
+
+void mostrarListaDeEnteros(cJson*, unsigned);
+void mostrarListaDeDouble(cJson*, unsigned);
+void mostrarListaDeChar(cJson*, unsigned);
 
 /***
 * Dado un puntero a variant libero memoria (si es que está
