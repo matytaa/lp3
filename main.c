@@ -6,11 +6,13 @@
 
 void crearUnJsonDeUnAtributo();
 void crearJsonDeVariosAtributos();
+void crearJsonArrayDeAtributos();
 
 int main(int argc, char** argv)
 {
-    crearUnJsonDeUnAtributo();
-    crearJsonDeVariosAtributos();
+    //crearUnJsonDeUnAtributo();
+    //crearJsonDeVariosAtributos();
+    crearJsonArrayDeAtributos();
     return 0;
 }
 
@@ -32,12 +34,10 @@ void crearUnJsonDeUnAtributo(){
 
     setVariant(unAtributo, clave, valor, largoClave, largo, tipo);
 
-
-
     asignarJson(unJson, &unAtributo, tamanio);
     unsigned desplazamiento = 0;
     guardarArchivo(unJson, desplazamiento);
-    mostrarPorConsola(unJson, desplazamiento);
+    mostrarPorConsola(unJson, desplazamiento, 1);
 
     liberar(unJson);
 }
@@ -52,7 +52,7 @@ void crearJsonDeVariosAtributos(){
     unsigned tipoNombre = 5;
 
     /** variant 2 **/
-    char claveEdad[] = "edad: ";
+    char claveEdad[] = "edad:";
     unsigned edad= 23;
     void* valorEdad= &edad;
     unsigned largoClaveEdad = strlen(claveEdad) +1;
@@ -109,7 +109,36 @@ void crearJsonDeVariosAtributos(){
 
     desplazamiento =0;
     for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-        mostrarPorConsola(unJson, desplazamiento);
+        mostrarPorConsola(unJson, desplazamiento, 1);
     }
     liberar(unJson);
 }
+
+void crearJsonArrayDeAtributos(){
+
+    cJson* unJson = (cJson*) malloc(sizeof(cJson));
+    inicializarJson(unJson);
+
+    variant* arrayAtributo = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(arrayAtributo);
+
+    unsigned cantidadElementos=4;
+    char* clave= "notas:";
+    unsigned largo = cantidadElementos*(sizeof(int));
+    int unArray[4]= {4,5,6,7};
+    //char un[4]= {'a','b','c','d'};
+    void* valor = unArray;
+    unsigned largoClave = strlen(clave)+1;
+    unsigned tamanio = largo + largoClave;
+    unsigned tipo = 6;
+
+    setVariant(arrayAtributo, clave, valor, largoClave, largo, tipo);
+
+    asignarJson(unJson, &arrayAtributo, tamanio);
+    unsigned desplazamiento = 0;
+    //guardarArchivo(unJson, desplazamiento);
+    mostrarPorConsola(unJson, desplazamiento, cantidadElementos);
+
+    liberar(unJson);
+}
+
