@@ -13,7 +13,7 @@
 #define vcadena 5
 
 #define vlistaInt 6
-#define vlistaDouble 7
+#define vlistaFloat 7
 #define vlistaChar 8
 
 
@@ -22,6 +22,7 @@ typedef struct _Variant {
     void* clave; // Tipo de dato contenido en el variant
     unsigned largo; // Cantidad de de bytes apuntados por data
     unsigned tamanio; //memoria utilizada por la estructura
+    unsigned cantidadElementos;
     unsigned tipo;
 
 } variant;
@@ -38,7 +39,7 @@ typedef struct _cJson{
 * @param largo Cantidad de bytes que ocupa un entero
 * @precondicion La estructura variant esta inicializada
 */
-void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo, unsigned tipo);
+void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsigned largo, unsigned tipo, unsigned elementos);
 
 
 /** Post:    asigna un nuevo valor a la estructura cJson **/
@@ -58,14 +59,7 @@ void* getLista (variant* v);
 * @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
 */
-float getFlotante( variant* );
-
-/***
-* post: retorno un double que contiene el valor del atributo
-* @param v Variant que quiero configurar
-* @precondicion La estructura variant esta inicializada
-*/
-double getDouble( variant*);
+float getFloat( variant* );
 
 /***
 * post: retorno un char* que contiene el valor del atributo
@@ -80,6 +74,21 @@ char* getStringValor( variant*);
 * @precondicion La estructura variant esta inicializada
 */
 char* getStringClave(variant* );
+
+/***
+* post: retorno la cantidad de elementos que poseé la clave
+* @param v Variant que quiero configurar
+* @precondicion La estructura variant esta inicializada
+*/
+unsigned getCantidadElemtos (variant* );
+
+/***
+* post: retorno el tipo de elementos que poseé el valor
+* @param v Variant que quiero configurar
+* @precondicion La estructura variant esta inicializada
+*/
+unsigned getTipoElemento ( variant* );
+
 
 /** Pre:    recibe un puntero a una estructura cJson alocada en el Stack vacia
     Post:   invoca a la funcion Inicializar
@@ -106,11 +115,11 @@ void guardarArchivo(cJson*, unsigned);
 /** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   imprime por pantalla los atributos de la estructura
 **/
-void mostrarPorConsola(cJson*, unsigned, unsigned);
+void mostrarPorConsola(cJson*, unsigned);
 
-void mostrarListaDeEnteros(cJson*, unsigned);
-void mostrarListaDeDouble(cJson*, unsigned);
-void mostrarListaDeChar(cJson*, unsigned);
+void mostrarListaDeEnteros(void*, unsigned);
+void mostrarListaDeFloat(void*, unsigned);
+void mostrarListaDeChar(void*, unsigned);
 
 /***
 * Dado un puntero a variant libero memoria (si es que está
