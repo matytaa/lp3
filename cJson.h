@@ -110,7 +110,7 @@ void inicializarAtributo( variant* unAtributo);
 /** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   guarda en un archivo destino los atributos de la estructura
 **/
-void guardarArchivo(cJson*, unsigned);
+void guardarArchivo(cJson*, unsigned, int argc, char** argv);
 
 /** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   imprime por pantalla los atributos de la estructura
