@@ -40,30 +40,40 @@ void crearJson(cJson* unJson){
 
 void mostrarPorConsola(cJson* unJson, unsigned desplazamiento){
 
-    printf("%s ", getStringClave((unJson->arrayAt[desplazamiento])));
+    if(desplazamiento==0){
+        printf("%s", "{\n");
+    }
+
+    printf("\"%s\": ", getStringClave((unJson->arrayAt[desplazamiento])));
     unsigned tipo = getTipoElemento(unJson->arrayAt[desplazamiento]);
     void* aux = getLista(unJson->arrayAt[desplazamiento]);
     unsigned elementos = getCantidadElemtos(unJson->arrayAt[desplazamiento]);
 
     switch(tipo){
         case ventero:
-            printf("%i\n",getInteger(*(unJson->arrayAt+desplazamiento)));
+            printf("%i,\n",getInteger(*(unJson->arrayAt+desplazamiento)));
             break;
         case vflotante:
-            printf("%f\n",getFloat(*(unJson->arrayAt+desplazamiento)));
+            printf("%f,\n",getFloat(*(unJson->arrayAt+desplazamiento)));
             break;
         case vcadena:
-            printf("%s\n",getStringValor(*(unJson->arrayAt+desplazamiento)));
+            printf("\"%s\",\n",getStringValor(*(unJson->arrayAt+desplazamiento)));
             break;
         case vlistaInt:
+            printf("%s","[");
             mostrarListaDeEnteros(aux, elementos);
             break;
         case vlistaFloat:
+            printf("%s","[");
             mostrarListaDeFloat(aux, elementos);
             break;
         case vlistaChar:
+            printf("%s","[");
             mostrarListaDeChar(aux, elementos);
             break;
+    }
+    if(desplazamiento==2){
+        printf("%s", "}\n");
     }
 }
 
@@ -75,7 +85,8 @@ void mostrarListaDeEnteros(void* aux, unsigned elementos){
         if(contador!=elementos-1){
             printf("%i, ", (auxInt[contador]));
         }else{
-            printf("%i\n", (auxInt[contador]));
+            printf("%i", (auxInt[contador]));
+            printf("%s","],\n");
         }
     }
     aux=NULL;
@@ -89,7 +100,8 @@ void mostrarListaDeFloat(void* aux, unsigned elementos){
         if(contador!=elementos-1){
             printf("%f, ", (auxFloat[contador]));
         }else{
-            printf("%f\n", (auxFloat[contador]));
+            printf("%f", (auxFloat[contador]));
+            printf("%s","],\n");
         }
     }
     auxFloat=NULL;
@@ -104,16 +116,21 @@ void mostrarListaDeChar(void* aux, unsigned elementos){
         if(contador!=elementos-1){
             printf("%.1s, ", (auxChar + contador));
         }else{
-            printf("%.1s\n", (auxChar + contador));
+            printf("%.1s", (auxChar + contador));
+            printf("%s","],\n");
         }
     }
     auxChar=NULL;
 }
 
-void guardarArchivo(cJson* unJson, unsigned desplazamiento){
+void guardarArchivo(cJson* unJson, unsigned desplazamiento,int argc, char** argv){
     FILE *archivoJson;
- 	archivoJson = fopen ( "archivoJson.txt", "a" );
-    fprintf(archivoJson, "%s ", getStringClave((unJson->arrayAt[desplazamiento])));
+ 	archivoJson = fopen ( "archivoJson.txt", "a" );//fopen(argv[argc+1], "a");
+    if(desplazamiento==0){
+        fprintf(archivoJson, "\n");
+        fprintf(archivoJson, "%s", "{\n");
+    }
+    fprintf(archivoJson, "\"%s\": ",getStringClave((unJson->arrayAt[desplazamiento])));
 
     unsigned tipo = getTipoElemento(unJson->arrayAt[desplazamiento]);
     void* aux = getLista(unJson->arrayAt[desplazamiento]);
@@ -130,20 +147,22 @@ void guardarArchivo(cJson* unJson, unsigned desplazamiento){
         break;
 
         case vflotante:
-        fprintf(archivoJson, "%f\n",getFloat(*(unJson->arrayAt+desplazamiento)));
+        fprintf(archivoJson, "%f,\n",getFloat(*(unJson->arrayAt+desplazamiento)));
         break;
 
         case vcadena:
-        fprintf(archivoJson, "%s\n",getStringValor(*(unJson->arrayAt+desplazamiento)));
+        fprintf(archivoJson, "\"%s\",\n",getStringValor(*(unJson->arrayAt+desplazamiento)));
         break;
 
         case vlistaInt:
             auxInt = aux;
+            fprintf(archivoJson, "%s","[");
             for (contador=0; contador<elementos; contador++){
                 if(contador!=elementos-1){
                     fprintf(archivoJson, "%i, ", (auxInt[contador]));
                 }else{
-                    fprintf(archivoJson, "%i\n", (auxInt[contador]));
+                    fprintf(archivoJson, "%i", (auxInt[contador]));
+                    fprintf(archivoJson, "%s","],\n");
                 }
             }
             auxInt=NULL;
@@ -151,11 +170,13 @@ void guardarArchivo(cJson* unJson, unsigned desplazamiento){
 
         case vlistaFloat:
             auxFloat = aux;
+            fprintf(archivoJson, "%s","[");
             for (contador=0; contador<elementos; contador++){
                 if(contador!=elementos-1){
                     fprintf(archivoJson, "%f, ", (auxFloat[contador]));
                 }else{
-                    fprintf(archivoJson, "%f\n", (auxFloat[contador]));
+                    fprintf(archivoJson, "%f", (auxFloat[contador]));
+                    fprintf(archivoJson, "%s","],\n");
                 }
             }
             auxFloat=NULL;
@@ -163,16 +184,21 @@ void guardarArchivo(cJson* unJson, unsigned desplazamiento){
 
         case vlistaChar:
             auxChar = aux;
-
+            fprintf(archivoJson, "%s","[");
             for (contador=0; contador<elementos; contador++){
                 if(contador!=elementos-1){
                     fprintf(archivoJson, "%.1s, ", (auxChar + contador));
                 }else{
-                    fprintf(archivoJson, "%.1s\n", (auxChar + contador));
+                    fprintf(archivoJson, "%.1s", (auxChar + contador));
+                    fprintf(archivoJson, "%s","],\n");
                 }
             }
             auxChar=NULL;
             break;
+    }
+
+    if(desplazamiento==2){
+        fprintf(archivoJson, "%s","}");
     }
 
  	fclose (archivoJson);
