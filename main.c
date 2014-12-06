@@ -4,20 +4,20 @@
 #include "cJSON.h"
 #include "cJSON.c"
 
-void crearUnJsonDeUnAtributo();
-void crearJsonDeVariosAtributos();
-void crearJsonArrayDeAtributos();
+void crearUnJsonDeUnAtributo(int argc, char** argv);
+void crearJsonDeVariosAtributos(int argc, char** argv);
+void crearJsonArrayDeAtributos(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
-    crearUnJsonDeUnAtributo();
-    crearJsonDeVariosAtributos();
-    crearJsonArrayDeAtributos();
+    crearUnJsonDeUnAtributo(argc, argv);
+    crearJsonDeVariosAtributos(argc, argv);
+    crearJsonArrayDeAtributos(argc, argv);
     return 0;
 }
 
 
-void crearUnJsonDeUnAtributo(){
+void crearUnJsonDeUnAtributo(int argc, char** argv){
 
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
     inicializarJson(unJson);
@@ -25,7 +25,7 @@ void crearUnJsonDeUnAtributo(){
     variant* unAtributo = (variant*) malloc(sizeof(variant));
     inicializarAtributo(unAtributo);
 
-    char* clave= "escuderia:";
+    char* clave= "escuderia";
     char* valor= "ferrari";
     unsigned largo = strlen(valor)+1;
     unsigned largoClave = strlen(clave)+1;
@@ -36,17 +36,21 @@ void crearUnJsonDeUnAtributo(){
     setVariant(unAtributo, clave, valor, largoClave, largo, tipo, elementos);
 
     asignarJson(unJson, &unAtributo, tamanio);
-    unsigned desplazamiento = 0;
-    guardarArchivo(unJson, desplazamiento);
-    mostrarPorConsola(unJson, desplazamiento);
+    unsigned desplazamiento =0;
+
+    //if(strcmp(argv[argc-1],"-f") == 0){
+        guardarArchivo(unJson, desplazamiento, argc, argv);
+    //}else{
+        mostrarPorConsola(unJson, desplazamiento);
+    //}
 
     liberar(unJson);
 }
 
-void crearJsonDeVariosAtributos(){
+void crearJsonDeVariosAtributos(int argc, char** argv){
 
     /** variant 1 **/
-    char claveNombre[] = "nombre:";
+    char claveNombre[] = "nombre";
     char valorNombre[] = "matias";
     unsigned largoClaveNombre = strlen(claveNombre) +1;
     unsigned largoValorNombre = strlen(valorNombre) +1;
@@ -54,7 +58,7 @@ void crearJsonDeVariosAtributos(){
     unsigned elementosNombre = 1;
 
     /** variant 2 **/
-    char claveEdad[] = "edad:";
+    char claveEdad[] = "edad";
     unsigned edad= 23;
     void* valorEdad= &edad;
     unsigned largoClaveEdad = strlen(claveEdad) +1;
@@ -63,7 +67,7 @@ void crearJsonDeVariosAtributos(){
     unsigned elementosEdad = 1;
 
     /** variant 3 **/
-    char claveDomicilio[] = "domicilio:";
+    char claveDomicilio[] = "domicilio";
     char valorDomicilio[] = "calle falsa 123";
     unsigned largoClaveDomicilio = strlen(claveDomicilio) +1;
     unsigned largoValorDomicilio = strlen(valorDomicilio) +1;
@@ -108,21 +112,26 @@ void crearJsonDeVariosAtributos(){
     asignarJson(unJson, arrayAt, tamanioTotal);
 
     unsigned desplazamiento =0;
-    for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-        guardarArchivo(unJson, desplazamiento);
-    }
 
-    desplazamiento =0;
-    for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-        mostrarPorConsola(unJson, desplazamiento);
-    }
+    //if(strcmp(argv[argc-1],"-f") == 0){
+        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
+            guardarArchivo(unJson, desplazamiento, argc, argv);
+        }
+    //}else{
+    desplazamiento=0;
+        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
+            mostrarPorConsola(unJson, desplazamiento);
+        }
+
+    //}
+
     liberar(unJson);
 }
 
-void crearJsonArrayDeAtributos(){
+void crearJsonArrayDeAtributos(int argc, char** argv){
 
     unsigned cantidadElementos=4;
-    char* clave= "notas:";
+    char* clave= "notas";
     unsigned largo = cantidadElementos*(sizeof(int));
     int unArray[4]= {4,5,6,7};
     void* valor = unArray;
@@ -131,7 +140,7 @@ void crearJsonArrayDeAtributos(){
     unsigned tipo = 6;
 
     unsigned cantidadElementosD = 5;
-    char* claveD= "notas doubles:";
+    char* claveD= "notas doubles";
     unsigned largoD = cantidadElementos*(sizeof(double));
     float unArrayD[]= {4.5, 5.5, 4.5, 3.5, 7.7};
     void* valorD = unArrayD;
@@ -141,7 +150,7 @@ void crearJsonArrayDeAtributos(){
 
     unsigned cantidadDeChar = 4;
     char arrayChar[]= {'a','b','c','d'};
-    char* claveDeptos = "Departamentos:";
+    char* claveDeptos = "Departamentos";
     void* valorDeptos = arrayChar;
     unsigned largoClaveDeptos = strlen(claveDeptos) + 1;
     unsigned largoValorDeptos = strlen(valorDeptos);
@@ -179,14 +188,18 @@ void crearJsonArrayDeAtributos(){
     asignarJson(unJson, arrayAt, tamanioTotal);
 
     unsigned desplazamiento =0;
-    for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-        guardarArchivo(unJson, desplazamiento);
-    }
 
-    desplazamiento =0;
-    for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-        mostrarPorConsola(unJson, desplazamiento);
-    }
+    //if(strcmp(argv[argc-1],"-f") == 0){
+        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
+            guardarArchivo(unJson, desplazamiento, argc, argv);
+        }
+    //}else{
+    desplazamiento=0;
+        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
+            mostrarPorConsola(unJson, desplazamiento);
+        }
+
+    //}
 
     liberar(unJson);
 }
