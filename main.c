@@ -29,19 +29,16 @@ void crearUnJsonDeUnAtributo(int argc, char** argv){
     char* valor= "ferrari";
     unsigned largo = strlen(valor)+1;
     unsigned largoClave = strlen(clave)+1;
-    unsigned tamanio = largo + largoClave;
     unsigned tipo = 5;
     unsigned elementos = 1;
 
     setVariant(unAtributo, clave, valor, largoClave, largo, tipo, elementos);
 
-    asignarJson(unJson, &unAtributo, tamanio);
-    unsigned desplazamiento =0;
-
+    asignarJson(unJson, unAtributo);
     //if(strcmp(argv[argc-1],"-f") == 0){
-        guardarArchivo(unJson, desplazamiento, argc, argv);
+        guardarArchivo(unJson, argc, argv);
     //}else{
-        mostrarPorConsola(unJson, desplazamiento);
+        mostrarPorConsola(unJson);
     //}
 
     liberar(unJson);
@@ -91,37 +88,15 @@ void crearJsonDeVariosAtributos(int argc, char** argv){
     setVariant(atributoDomicilio, claveDomicilio, valorDomicilio, largoClaveDomicilio,
                largoValorDomicilio, tipoDomicilio, elementosDomicilio);
 
-    unsigned tamanioNombre = strlen(getStringClave(atributoNombre))+ atributoNombre->largo;
-    unsigned tamanioEdad = strlen(getStringClave(atributoEdad))+ atributoEdad->largo;
-    unsigned tamanioDomicilio =  strlen(getStringClave(atributoDomicilio))+ atributoDomicilio->largo;
-
-    unsigned tamanioTotal = tamanioDomicilio + tamanioEdad + tamanioNombre;
-
-    variant** arrayAt;
-    arrayAt = (variant**) malloc(tamanioNombre);
-    *(arrayAt) = atributoNombre;
-
-    unsigned posicion = 1;
-    *(arrayAt+posicion) = (variant*) malloc(tamanioEdad);
-    arrayAt[posicion] = atributoEdad;
-
-    posicion++;
-    arrayAt[posicion] = (variant*) malloc(tamanioDomicilio);
-    arrayAt[posicion] = atributoDomicilio;
-
-    asignarJson(unJson, arrayAt, tamanioTotal);
-
-    unsigned desplazamiento =0;
+    asignarJson(unJson, atributoDomicilio);
+    asignarJson(unJson, atributoEdad);
+    asignarJson(unJson, atributoNombre);
 
     //if(strcmp(argv[argc-1],"-f") == 0){
-        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-            guardarArchivo(unJson, desplazamiento, argc, argv);
-        }
+        guardarArchivo(unJson, argc, argv);
     //}else{
-    desplazamiento=0;
-        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-            mostrarPorConsola(unJson, desplazamiento);
-        }
+    //desplazamiento=0;
+        mostrarPorConsola(unJson);
 
     //}
 
@@ -136,7 +111,6 @@ void crearJsonArrayDeAtributos(int argc, char** argv){
     int unArray[4]= {4,5,6,7};
     void* valor = unArray;
     unsigned largoClave = strlen(clave)+1;
-    unsigned tamanio = largo + largoClave;
     unsigned tipo = 6;
 
     unsigned cantidadElementosD = 5;
@@ -145,7 +119,6 @@ void crearJsonArrayDeAtributos(int argc, char** argv){
     float unArrayD[]= {4.5, 5.5, 4.5, 3.5, 7.7};
     void* valorD = unArrayD;
     unsigned largoClaveD = strlen(claveD)+1;
-    unsigned tamanioD = largoD + largoClaveD;
     unsigned tipoD = 7;
 
     unsigned cantidadDeChar = 4;
@@ -154,7 +127,6 @@ void crearJsonArrayDeAtributos(int argc, char** argv){
     void* valorDeptos = arrayChar;
     unsigned largoClaveDeptos = strlen(claveDeptos) + 1;
     unsigned largoValorDeptos = strlen(valorDeptos);
-    unsigned tamanioDepto = largoClaveDeptos + largoValorDeptos;
     unsigned tipoDepto= 8;
 
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
@@ -171,34 +143,15 @@ void crearJsonArrayDeAtributos(int argc, char** argv){
     setVariant(atributoNotasDouble, claveD, valorD, largoClaveD, largoD, tipoD, cantidadElementosD);
     setVariant(atributoDeptos, claveDeptos, valorDeptos, largoClaveDeptos, largoValorDeptos, tipoDepto, cantidadDeChar);
 
-    variant** arrayAt;
-    arrayAt = (variant**) malloc(tamanio);
-    *(arrayAt) = atributoNotas;
 
-    unsigned posicion = 1;
-    *(arrayAt+posicion) = (variant*) malloc(tamanioD);
-    arrayAt[posicion] = atributoNotasDouble;
-
-    posicion++;
-    *(arrayAt+posicion) = (variant*) malloc(tamanioDepto);
-    arrayAt[posicion] = atributoDeptos;
-
-    unsigned tamanioTotal = tamanio + tamanioDepto + tamanioD;
-
-    asignarJson(unJson, arrayAt, tamanioTotal);
-
-    unsigned desplazamiento =0;
+    asignarJson(unJson, atributoNotas);
+    asignarJson(unJson, atributoNotasDouble);
+    asignarJson(unJson, atributoDeptos);
 
     //if(strcmp(argv[argc-1],"-f") == 0){
-        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-            guardarArchivo(unJson, desplazamiento, argc, argv);
-        }
+        guardarArchivo(unJson,argc, argv);
     //}else{
-    desplazamiento=0;
-        for(desplazamiento=0; desplazamiento<3; desplazamiento++){
-            mostrarPorConsola(unJson, desplazamiento);
-        }
-
+        mostrarPorConsola(unJson);
     //}
 
     liberar(unJson);
