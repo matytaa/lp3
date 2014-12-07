@@ -19,17 +19,21 @@
 
 typedef struct _Variant {
     void* valor; // Datos contenidos por el variant
-    void* clave; // Tipo de dato contenido en el variant
-    unsigned largo; // Cantidad de de bytes apuntados por data
+    char* clave; // Clave de los datos contenidos por el variant
+    unsigned largo; // Cantidad de de bytes apuntados por dato valor
     unsigned tamanio; //memoria utilizada por la estructura
     unsigned cantidadElementos;
     unsigned tipo;
+    struct _Variant* anterior;
+    struct _Variant* siguiente;
 
 } variant;
 
 typedef struct _cJson{
     unsigned tamanioJson;
-    variant** arrayAt;
+    variant* primero;
+    variant* ultimo;
+
 }cJson;
 
 /***
@@ -43,7 +47,7 @@ void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsign
 
 
 /** Post:    asigna un nuevo valor a la estructura cJson **/
-void asignarJson( cJson*, variant**, unsigned tamanio );
+void asignarJson( cJson*, variant*);
 
 /***
 * post: retorno un double que contiene el valor del atributo
@@ -99,7 +103,7 @@ void crearJson( cJson*);
 /** Pre:    recibe un puntero a una estructura cJson alocada en el Stack vacia
     Post:   inicializa cada uno de los atributos de la estructura NULL
 **/
-void inicializar( cJson*, variant*);
+void inicializarJson( cJson* );
 
 /** Pre:    recibe un puntero a una estructura variant alocada en el Stack vacia
     Post:   inicializa cada uno de los atributos de la estructura en NULL
@@ -110,12 +114,12 @@ void inicializarAtributo( variant* unAtributo);
 /** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   guarda en un archivo destino los atributos de la estructura
 **/
-void guardarArchivo(cJson*, unsigned, int argc, char** argv);
+void guardarArchivo(cJson*, int argc, char** argv);
 
 /** Pre:    recibe un puntero a una estructura cJson alocado en memoria inicializado y asignado
     Post:   imprime por pantalla los atributos de la estructura
 **/
-void mostrarPorConsola(cJson*, unsigned);
+void mostrarPorConsola(cJson*);
 
 void mostrarListaDeEnteros(void*, unsigned);
 void mostrarListaDeFloat(void*, unsigned);
@@ -132,7 +136,7 @@ void liberarVariant(variant*);
 * post: libera la memoria utilizada por el array de variant
 * @param variant**
 **/
-void liberarArrayVariant(variant**);
+void liberarArrayVariant(variant*);
 
 /**
     Post:   libera el espacio ocupado en memoria por la estructura cJson
