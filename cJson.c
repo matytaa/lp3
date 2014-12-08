@@ -42,7 +42,6 @@ void mostrarPorConsola(cJson* unJson){
 
     if(unJson->primero){
         printf("%s", "{\n");
-
         variant* auxIt = unJson->primero;
 
         while (auxIt){
@@ -54,6 +53,11 @@ void mostrarPorConsola(cJson* unJson){
             unsigned elementos = getCantidadElemtos(auxIt);
 
             switch(tipo){
+                case vjson:
+                    printf("%s","[");
+
+
+
                 case ventero:
                     printf("%i,\n",getInteger(auxIt));
                     break;
@@ -64,17 +68,14 @@ void mostrarPorConsola(cJson* unJson){
                     printf("\"%s\",\n",getStringValor(auxIt));
                     break;
                 case vlistaInt:
-                    /** mal, muestra cualquier cosa **/
                     printf("%s","[");
                     mostrarListaDeEnteros(auxIt, elementos);
                     break;
                 case vlistaFloat:
-                    /** mal, muestra cualquier cosa **/
                     printf("%s","[");
                     mostrarListaDeFloat(auxIt, elementos);
                     break;
                 case vlistaChar:
-                    /** mal, muestra cualquier cosa **/
                     printf("%s","[");
                     mostrarListaDeChar(auxIt, elementos);
                     break;
@@ -86,9 +87,9 @@ void mostrarPorConsola(cJson* unJson){
     }
 }
 
-void mostrarListaDeEnteros(void* aux, unsigned elementos){
+void mostrarListaDeEnteros(variant* aux, unsigned elementos){
     unsigned contador = 0;
-    int* auxInt = aux;
+    int* auxInt = aux->valor;
 
     for (contador=0; contador<elementos; contador++){
         if(contador!=elementos-1){
@@ -101,9 +102,9 @@ void mostrarListaDeEnteros(void* aux, unsigned elementos){
     aux=NULL;
 }
 
-void mostrarListaDeFloat(void* aux, unsigned elementos){
+void mostrarListaDeFloat(variant* aux, unsigned elementos){
     unsigned contador = 0;
-    float* auxFloat= aux;
+    float* auxFloat= aux->valor;
 
     for (contador=0; contador<elementos; contador++){
         if(contador!=elementos-1){
@@ -116,10 +117,10 @@ void mostrarListaDeFloat(void* aux, unsigned elementos){
     auxFloat=NULL;
 }
 
-void mostrarListaDeChar(void* aux, unsigned elementos){
+void mostrarListaDeChar(variant* aux, unsigned elementos){
 
     unsigned contador = 0;
-    char* auxChar = aux;
+    char* auxChar = aux->valor;
 
     for (contador=0; contador<elementos; contador++){
         if(contador!=elementos-1){
@@ -141,16 +142,16 @@ void guardarArchivo(cJson* unJson,int argc, char** argv){
         fprintf(archivoJson, "%s", "{\n");
 
         variant* auxIt = unJson->primero;
-        fprintf(archivoJson, "\"%s\": ",getStringClave(auxIt));
-        unsigned tipo = getTipoElemento(auxIt);
-        unsigned elementos = getCantidadElemtos(auxIt);
-        unsigned contador = 0;
 
         int* auxInt = NULL;
         float* auxFloat = NULL;
         char* auxChar = NULL;
 
         while (auxIt){
+            fprintf(archivoJson, "\"%s\": ",getStringClave(auxIt));
+            unsigned tipo = getTipoElemento(auxIt);
+            unsigned elementos = getCantidadElemtos(auxIt);
+            unsigned contador = 0;
 
             switch(tipo){
                 case ventero:
@@ -167,7 +168,7 @@ void guardarArchivo(cJson* unJson,int argc, char** argv){
 
                 case vlistaInt:
                     /** mal, muestra cualquier cosa **/
-                    auxInt = (int*)auxIt;
+                    auxInt = auxIt->valor;
                     fprintf(archivoJson, "%s","[");
                     for (contador=0; contador<elementos; contador++){
                         if(contador!=elementos-1){
@@ -182,7 +183,7 @@ void guardarArchivo(cJson* unJson,int argc, char** argv){
 
                 case vlistaFloat:
                     /** mal, muestra cualquier cosa **/
-                    auxFloat = (float*)auxIt;
+                    auxFloat = auxIt->valor;
                     fprintf(archivoJson, "%s","[");
                     for (contador=0; contador<elementos; contador++){
                         if(contador!=elementos-1){
@@ -197,7 +198,7 @@ void guardarArchivo(cJson* unJson,int argc, char** argv){
 
                 case vlistaChar:
                     /** mal, muestra cualquier cosa **/
-                    auxChar = (char*)auxIt;
+                    auxChar = auxIt->valor;
                     fprintf(archivoJson, "%s","[");
                     for (contador=0; contador<elementos; contador++){
                         if(contador!=elementos-1){
@@ -251,7 +252,8 @@ void asignarJson(cJson* unJson, variant* unAtributo){
 
 
 }
-
+/** si uso este metodo debo decrementar a  mano el tamaño del json
+    ya que no tengo forma de acceder al json**/
 void liberarVariant(variant* variant) {
     variant->largo = 0;
     variant->cantidadElementos = 0;
@@ -264,25 +266,62 @@ void liberarVariant(variant* variant) {
         free( variant->valor );
 
     variant->valor = NULL;
-    variant->anterior = NULL;
-    variant->siguiente = NULL;
+
+    /** si quiero eliminar un variant que no se encuentre e
+    n los extremos tengo que enganchar al anterior con el siguiente**/
+    if((variant->anterior)&&(variant->siguiente)){
+        variant->anterior->siguiente = variant->siguiente;
+        variant->siguiente->anterior = variant->anterior;
+        return;
+    }
+    /** si quiero eliminar el ultimo variant cambia el puntero del
+    ultimo variant, y dice que el nuevo ultimo es su anterior **/
+    if((variant->anterior)&&(!variant->siguiente)){
+        variant->anterior->siguiente = NULL;
+        return;
+    }
+
+    if((!variant->anterior)&&(variant->siguiente)){
+        variant->siguiente->anterior = NULL;
+        return;
+    }
 }
 
+/** borro el contenido del 1er variant
+    y cambia los punteros del json primero y/o ultimo
+    al siguiente del 1er variant **/
+void liberarPrimero(cJson* unJson){
+
+    liberarVariant(unJson->primero);
+
+    /** esto es si solo tengo un variant en el json **/
+    if(unJson->primero==unJson->ultimo){
+        unJson->primero = unJson->primero->siguiente;
+        unJson->ultimo = unJson->primero->siguiente;
+        return;
+    }
+    unJson->primero = unJson->primero->siguiente;
+    unJson->tamanioJson -= sizeof(variant);
+}
+
+/** este va liberar lo hara hasta la muerte misma del json**/
 void liberar(cJson* unJson){
     unJson->tamanioJson = 0;
-    if(unJson->primero)
-        liberarVariant(unJson->primero);
-    unJson->primero= NULL;
 
-    if(unJson->ultimo)
+    while(unJson->primero->siguiente){
         liberarVariant(unJson->ultimo);
-    unJson->ultimo= NULL;
+    }
+    liberarVariant(unJson->primero);
+    free(unJson->primero);
+    free(unJson->ultimo);
 
+    unJson->primero = NULL;
+    unJson->ultimo = NULL;
 }
 
+/** el set que todos conocemos **/
 void setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo, unsigned tipo, unsigned elementos) {
     v->largo = largo;
-    v->tamanio = largo + largoClave;
     v->cantidadElementos = elementos;
     v->tipo = tipo;
 
