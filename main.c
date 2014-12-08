@@ -206,11 +206,11 @@ void eliminarAtributos(int argc, char** argv){
     asignarJson(unJson, atributoModelo);
     asignarJson(unJson, atributoKm);
 
-    liberarPrimero(unJson);
-    unJson->tamanioJson -= sizeof(variant);
-    mostrarPorConsola(unJson);
-    liberarPrimero(unJson);
-    unJson->tamanioJson -= sizeof(variant);
+    //liberarPrimero(unJson);
+    //unJson->tamanioJson -= sizeof(variant);
+    //mostrarPorConsola(unJson);
+    //liberarPrimero(unJson);
+    //unJson->tamanioJson -= sizeof(variant);
 
     variant* unAtributo = (variant*) malloc(sizeof(variant));
     inicializarAtributo(unAtributo);
@@ -229,5 +229,4 @@ void eliminarAtributos(int argc, char** argv){
 
     liberar(unJson);
     mostrarPorConsola(unJson);
-
 }
