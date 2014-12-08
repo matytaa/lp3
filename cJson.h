@@ -3,8 +3,7 @@
 
 /** Definición de la estructura Json en C
 **/
-#define vfalse 0
-#define vtrue 1
+#define vjson 1
 
 #define vnull 2
 #define ventero 3
@@ -21,8 +20,7 @@ typedef struct _Variant {
     void* valor; // Datos contenidos por el variant
     char* clave; // Clave de los datos contenidos por el variant
     unsigned largo; // Cantidad de de bytes apuntados por dato valor
-    unsigned tamanio; //memoria utilizada por la estructura
-    unsigned cantidadElementos;
+    unsigned cantidadElementos; //si es mayor a 1 es un array
     unsigned tipo;
     struct _Variant* anterior;
     struct _Variant* siguiente;
@@ -121,9 +119,9 @@ void guardarArchivo(cJson*, int argc, char** argv);
 **/
 void mostrarPorConsola(cJson*);
 
-void mostrarListaDeEnteros(void*, unsigned);
-void mostrarListaDeFloat(void*, unsigned);
-void mostrarListaDeChar(void*, unsigned);
+void mostrarListaDeEnteros(variant*, unsigned);
+void mostrarListaDeFloat(variant*, unsigned);
+void mostrarListaDeChar(variant*, unsigned);
 
 /***
 * Dado un puntero a variant libero memoria (si es que está
@@ -133,10 +131,10 @@ void mostrarListaDeChar(void*, unsigned);
 void liberarVariant(variant*);
 
 /**
-* post: libera la memoria utilizada por el array de variant
-* @param variant**
+* post: libera la memoria utilizada por el primer variant y redefine el primer variant
+* @param cJson*, variant*
 **/
-void liberarArrayVariant(variant*);
+void liberarPrimero(cJson* unJson);
 
 /**
     Post:   libera el espacio ocupado en memoria por la estructura cJson
