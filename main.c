@@ -7,12 +7,15 @@
 void crearUnJsonDeUnAtributo(int argc, char** argv);
 void crearJsonDeVariosAtributos(int argc, char** argv);
 void crearJsonArrayDeAtributos(int argc, char** argv);
+void eliminarAtributos(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
     crearUnJsonDeUnAtributo(argc, argv);
     crearJsonDeVariosAtributos(argc, argv);
     crearJsonArrayDeAtributos(argc, argv);
+    eliminarAtributos(argc, argv);
+
     return 0;
 }
 
@@ -157,3 +160,74 @@ void crearJsonArrayDeAtributos(int argc, char** argv){
     liberar(unJson);
 }
 
+void eliminarAtributos(int argc, char** argv){
+
+    char* claveMarca= "marca";
+    char* valorMarca = "fiat";
+    unsigned largoValorMarca = strlen(valorMarca)+1;
+    unsigned largoClaveMarca = strlen(claveMarca)+1;
+    unsigned tipoMarca = 5;
+    unsigned elementosMarca=1;
+
+    /** variant 2 **/
+    char claveModelo[] = "modelo";
+    unsigned modelo= 2013;
+    void* valorModelo= &modelo;
+    unsigned largoClaveModelo= strlen(claveModelo) +1;
+    unsigned largoValorModelo= sizeof(unsigned);
+    unsigned tipoModelo = 3;
+    unsigned elementosModelo = 1;
+
+    /** variant 3 **/
+    char claveKm[] = "kilometros";
+    unsigned kilometros= 30000;
+    void* valorKm= &kilometros;
+    unsigned largoClaveKm= strlen(claveKm) +1;
+    unsigned largoValorKm= sizeof(unsigned);
+    unsigned tipoKm = 3;
+    unsigned elementosKm = 1;
+
+    cJson* unJson = (cJson*) malloc(sizeof(cJson));
+    inicializarJson(unJson);
+
+    variant* atributoMarca = (variant*) malloc(sizeof(variant));
+    variant* atributoModelo = (variant*) malloc(sizeof(variant));
+    variant* atributoKm= (variant*) malloc(sizeof(variant));
+    inicializarAtributo(atributoMarca);
+    inicializarAtributo(atributoModelo);
+    inicializarAtributo(atributoKm);
+
+    setVariant(atributoMarca, claveMarca, valorMarca, largoClaveMarca, largoValorMarca, tipoMarca, elementosMarca);
+    setVariant(atributoModelo, claveModelo, valorModelo, largoClaveModelo, largoValorModelo, tipoModelo, elementosModelo);
+    setVariant(atributoKm, claveKm, valorKm, largoClaveKm, largoValorKm, tipoKm, elementosKm);
+
+
+    asignarJson(unJson, atributoMarca);
+    asignarJson(unJson, atributoModelo);
+    asignarJson(unJson, atributoKm);
+
+    liberarPrimero(unJson);
+    unJson->tamanioJson -= sizeof(variant);
+    mostrarPorConsola(unJson);
+    liberarPrimero(unJson);
+    unJson->tamanioJson -= sizeof(variant);
+
+    variant* unAtributo = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(unAtributo);
+
+    char* clave= "escuderia";
+    char* valor= "ferrari";
+    unsigned largo = strlen(valor)+1;
+    unsigned largoClave = strlen(clave)+1;
+    unsigned tipo = 5;
+    unsigned elementos = 1;
+
+    setVariant(unAtributo, clave, valor, largoClave, largo, tipo, elementos);
+
+    asignarJson(unJson, unAtributo);
+    mostrarPorConsola(unJson);
+
+    liberar(unJson);
+    mostrarPorConsola(unJson);
+
+}
