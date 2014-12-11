@@ -33,11 +33,6 @@ unsigned getTipoElemento ( variant* v){
     return v->tipo;
 }
 
-void crearJson(cJson* unJson){
-    unJson = (cJson*) malloc(sizeof(cJson));
-
-}
-
 void mostrarPorConsola(cJson* unJson) {
 
 	if (unJson->primero) {
@@ -242,6 +237,10 @@ void inicializarAtributo( variant* unAtributo){
 }
 
 void asignarJson(cJson* unJson, variant* unAtributo){
+    if(!unAtributo){
+        printf("No cumple pre-condición \n");
+        return;
+    }
 
     unJson->tamanioJson += sizeof(variant);
     if(!unJson->primero){
@@ -256,6 +255,23 @@ void asignarJson(cJson* unJson, variant* unAtributo){
 
 
 }
+
+void asignarJsonDeJson( cJson* jsonAAsignar, cJson* unJson){
+    if(!unJson->primero){
+        printf("No cumple pre-condición \n");
+        return;
+    }
+    variant* auxIt = unJson->primero;
+    asignarJson(jsonAAsignar, auxIt);
+
+    while(auxIt->siguiente){
+        auxIt = auxIt->siguiente;
+        asignarJson(jsonAAsignar, auxIt);
+    }
+
+    auxIt = NULL;
+}
+
 /** si uso este metodo debo decrementar a  mano el tamaño del json
     ya que no tengo forma de acceder al json**/
 void liberarVariant(variant* variant) {
