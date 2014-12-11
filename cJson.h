@@ -47,6 +47,9 @@ void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsign
 /** Post:    asigna un nuevo valor a la estructura cJson **/
 void asignarJson( cJson*, variant*);
 
+/** Post:    asigna un nuevo valor a la estructura cJson **/
+void asignarJsonDeJson( cJson*, cJson*);
+
 /***
 * post: retorno un double que contiene el valor del atributo
 * @param v Variant que quiero configurar
@@ -91,12 +94,6 @@ unsigned getCantidadElemtos (variant* );
 */
 unsigned getTipoElemento ( variant* );
 
-
-/** Pre:    recibe un puntero a una estructura cJson alocada en el Stack vacia
-    Post:   invoca a la funcion Inicializar
-**/
-
-void crearJson( cJson*);
 
 /** Pre:    recibe un puntero a una estructura cJson alocada en el Stack vacia
     Post:   inicializa cada uno de los atributos de la estructura NULL
