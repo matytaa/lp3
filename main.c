@@ -8,6 +8,7 @@ void crearUnJsonDeUnAtributo(int argc, char** argv);
 void crearJsonDeVariosAtributos(int argc, char** argv);
 void crearJsonArrayDeAtributos(int argc, char** argv);
 void eliminarAtributos(int argc, char** argv);
+void crearJsonDeJson (int argc, char** argv);
 
 int main(int argc, char** argv)
 {
@@ -15,6 +16,7 @@ int main(int argc, char** argv)
     crearJsonDeVariosAtributos(argc, argv);
     crearJsonArrayDeAtributos(argc, argv);
     eliminarAtributos(argc, argv);
+    crearJsonDeJson(argc, argv);
 
     return 0;
 }
@@ -38,11 +40,11 @@ void crearUnJsonDeUnAtributo(int argc, char** argv){
     setVariant(unAtributo, clave, valor, largoClave, largo, tipo, elementos);
 
     asignarJson(unJson, unAtributo);
-    //if(strcmp(argv[argc-1],"-f") == 0){
+    if(strcmp(argv[argc-1],"-f") == 0){
         guardarArchivo(unJson, argc, argv);
-    //}else{
+    }else{
         mostrarPorConsola(unJson);
-    //}
+    }
 
     liberar(unJson);
 }
@@ -95,13 +97,11 @@ void crearJsonDeVariosAtributos(int argc, char** argv){
     asignarJson(unJson, atributoEdad);
     asignarJson(unJson, atributoNombre);
 
-    //if(strcmp(argv[argc-1],"-f") == 0){
+    if(strcmp(argv[argc-1],"-f") == 0){
         guardarArchivo(unJson, argc, argv);
-    //}else{
-    //desplazamiento=0;
+    }else{
         mostrarPorConsola(unJson);
-
-    //}
+    }
 
     liberar(unJson);
 }
@@ -229,4 +229,61 @@ void eliminarAtributos(int argc, char** argv){
 
     liberar(unJson);
     mostrarPorConsola(unJson);
+}
+
+
+void crearJsonDeJson(int argc, char** argv){
+
+    /** variant 1 **/
+    char claveNombre[] = "nombre";
+    char valorNombre[] = "matias";
+    unsigned largoClaveNombre = strlen(claveNombre) +1;
+    unsigned largoValorNombre = strlen(valorNombre) +1;
+    unsigned tipoNombre = 5;
+    unsigned elementosNombre = 1;
+
+    /** variant 2 **/
+    char claveEdad[] = "edad";
+    unsigned edad= 23;
+    void* valorEdad= &edad;
+    unsigned largoClaveEdad = strlen(claveEdad) +1;
+    unsigned largoValorEdad= sizeof(unsigned);
+    unsigned tipoEdad = 3;
+    unsigned elementosEdad = 1;
+
+    /** variant 3 **/
+    char claveDomicilio[] = "domicilio";
+    char valorDomicilio[] = "calle falsa 123";
+    unsigned largoClaveDomicilio = strlen(claveDomicilio) +1;
+    unsigned largoValorDomicilio = strlen(valorDomicilio) +1;
+    unsigned tipoDomicilio = 5;
+    unsigned elementosDomicilio = 1;
+
+    cJson* unJson = (cJson*) malloc(sizeof(cJson));
+    inicializarJson(unJson);
+
+    variant* atributoNombre = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(atributoNombre);
+
+    variant* atributoEdad = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(atributoEdad);
+
+    variant* atributoDomicilio = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(atributoDomicilio);
+
+    setVariant(atributoNombre, claveNombre, valorNombre, largoClaveNombre, largoValorNombre, tipoNombre, elementosNombre);
+    setVariant(atributoEdad, claveEdad, valorEdad, largoClaveEdad, largoValorEdad, tipoEdad, elementosEdad);
+    setVariant(atributoDomicilio, claveDomicilio, valorDomicilio, largoClaveDomicilio,
+               largoValorDomicilio, tipoDomicilio, elementosDomicilio);
+
+    asignarJson(unJson, atributoDomicilio);
+    asignarJson(unJson, atributoEdad);
+    asignarJson(unJson, atributoNombre);
+
+    cJson* otroJson = (cJson*) malloc(sizeof(cJson));
+    inicializarJson(otroJson);
+
+    asignarJsonDeJson(otroJson, unJson);
+
+    mostrarPorConsola(otroJson);
 }
