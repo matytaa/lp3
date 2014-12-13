@@ -9,7 +9,7 @@ void crearJson(int argc, char** argv);
 int main(int argc, char** argv)
 {
     /** damos valores a los parametros del argumento para hacer pruebas
-     * en caso de querer mostrar por consola hay que borrar la asignación**/
+    en caso de querer mostrar por consola hay que borrar la asignación**/
     argc = 2;
     char* a= "archivo.txt";
     argv[1]=a;
@@ -243,11 +243,10 @@ void crearJson(int argc, char** argv){
     }
 
     liberar(unJson);
-    /** Compruebo que unJson esté liberado correctamente**/
     mostrarPorConsola(unJson);
-    
+
     liberar(otroJson);
-    /** Compruebo que otroJson esté liberado correctamente**/
+
     mostrarPorConsola(otroJson);
 }
 
