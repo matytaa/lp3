@@ -3,9 +3,9 @@
 
 /** Definición de la estructura Json en C
 **/
-#define vjsoninicio 10
+#define vjsoninicio 10 //indica inicio del json
 
-#define vjsonfinal 20
+#define vjsonfinal 20 //indica final del Json
 #define ventero 3
 
 #define vflotante 4
@@ -35,6 +35,7 @@ typedef struct _cJson{
 }cJson;
 
 /***
+* pre: variant inicializado, todos los parametros deben no ser nulos
 * post: Almacenar los datos en el variant
 * @param v Variant que quiero configurar
 * @param data Puntero al comienzo del entero
@@ -47,7 +48,8 @@ void setVariant( variant*, void* clave, void* valor, unsigned largoClave, unsign
 /** Post:    asigna un nuevo valor a la estructura cJson **/
 void asignarJson( cJson*, variant*);
 
-/** Post:    asigna un nuevo valor a la estructura cJson **/
+/** pre: cJson inicializado, el json a asignar no debe ser nulo
+* Post:    asigna un nuevo valor a la estructura cJson **/
 void asignarJsonDeJson( cJson*, cJson*);
 
 /***
@@ -59,35 +61,35 @@ int getInteger( variant*);
 
 void* getLista (variant* v);
 
-/***
+/**pre: variant no debe ser nulo
 * post: retorno un float que contiene el valor del atributo
 * @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
 */
 float getFloat( variant* );
 
-/***
+/**pre: variant no debe ser nulo
 * post: retorno un char* que contiene el valor del atributo
 * @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
 */
 char* getStringValor( variant*);
 
-/***
+/**pre: variant no debe ser nulo
 * post: retorno un char* que contiene la clave
 * @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
 */
 char* getStringClave(variant* );
 
-/***
+/**pre: variant no debe ser nulo
 * post: retorno la cantidad de elementos que poseé la clave
 * @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
 */
 unsigned getCantidadElemtos (variant* );
 
-/***
+/**pre: variant no debe ser nulo
 * post: retorno el tipo de elementos que poseé el valor
 * @param v Variant que quiero configurar
 * @precondicion La estructura variant esta inicializada
@@ -116,8 +118,22 @@ void guardarArchivo(cJson*, int argc, char** argv);
 **/
 void mostrarPorConsola(cJson*);
 
+/** Pre:    recibe un puntero a un variant alocado en memoria asignado y un unsigned
+    que determina la cantidad de elementos que posee
+    Post:   imprime por pantalla los atributos de la estructura
+**/
 void mostrarListaDeEnteros(variant*, unsigned);
+
+/** Pre:    recibe un puntero a un variant alocado en memoria asignado y un unsigned
+    que determina la cantidad de elementos que posee
+    Post:   imprime por pantalla los atributos de la estructura
+**/
 void mostrarListaDeFloat(variant*, unsigned);
+
+/** Pre:    recibe un puntero a un variant alocado en memoria asignado y un unsigned
+    que determina la cantidad de elementos que posee
+    Post:   imprime por pantalla los atributos de la estructura
+**/
 void mostrarListaDeChar(variant*, unsigned);
 
 /***
