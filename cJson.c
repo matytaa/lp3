@@ -142,6 +142,7 @@ void mostrarListaDeChar(variant* aux, unsigned elementos) {
 	auxChar = NULL;
 }
 
+/** guarda unJson en el archivo destino indicado **/
 void guardarArchivo(cJson* unJson, int argc, char** argv) {
 	if (unJson->primero) {
 
@@ -187,7 +188,6 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 				break;
 
 			case vlistaInt:
-				/** mal, muestra cualquier cosa **/
 				auxInt = auxIt->valor;
 				fprintf(archivoJson, "%s", "[");
 				for (contador = 0; contador < elementos; contador++) {
@@ -202,7 +202,6 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 				break;
 
 			case vlistaFloat:
-				/** mal, muestra cualquier cosa **/
 				auxFloat = auxIt->valor;
 				fprintf(archivoJson, "%s", "[");
 				for (contador = 0; contador < elementos; contador++) {
@@ -217,7 +216,6 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 				break;
 
 			case vlistaChar:
-				/** mal, muestra cualquier cosa **/
 				auxChar = auxIt->valor;
 				fprintf(archivoJson, "%s", "[");
 				for (contador = 0; contador < elementos; contador++) {
@@ -306,9 +304,23 @@ void asignarJsonDeJson( cJson* jsonAAsignar, cJson* unJson){
     auxIt = NULL;
 }
 
-/** si uso este metodo debo decrementar a  mano el tamaño del json
-        ya que no tengo forma de acceder al json**/
+/** Previo a la liberación del Variant modifica el siguiente del nodo anterior
+*   y el anterior del nodo siguiente según corresponda. Luego libera todos los atributos
+**/
 void liberarVariant(variant* variant) {
+
+    if((variant->anterior)&&(variant->siguiente)){
+        variant->anterior->siguiente = variant->siguiente;
+        variant->siguiente->anterior = variant->anterior;
+    }
+    if((variant->anterior)&&(!variant->siguiente)){
+        variant->anterior->siguiente = NULL;
+    }
+
+    if((!variant->anterior)&&(variant->siguiente)){
+        variant->siguiente->anterior = NULL;
+    }
+
     variant->largo = 0;
     variant->cantidadElementos = 0;
     variant->tipo = 0;
@@ -321,22 +333,6 @@ void liberarVariant(variant* variant) {
 
     variant->valor = NULL;
 
-    /** si quiero eliminar un variant que no se encuentre e
-    n los extremos tengo que enganchar al anterior con el siguiente**/
-    if((variant->anterior)&&(variant->siguiente)){
-        variant->anterior->siguiente = variant->siguiente;
-        variant->siguiente->anterior = variant->anterior;
-    }
-    /** si quiero eliminar el ultimo variant cambia el puntero del
-    ultimo variant, y dice que el nuevo ultimo es su anterior **/
-    if((variant->anterior)&&(!variant->siguiente)){
-        variant->anterior->siguiente = NULL;
-    }
-
-    if((!variant->anterior)&&(variant->siguiente)){
-        variant->siguiente->anterior = NULL;
-    }
-
     if(variant->anterior)
         free(variant->anterior);
     if(variant->anterior)
@@ -348,7 +344,7 @@ void liberarVariant(variant* variant) {
 
 /** borro el contenido del 1er variant
     y cambia los punteros del json primero y/o ultimo
-    al siguiente del 1er variant **/
+    al siguiente del 1er variant siempre que tenga siguiente**/
 void liberarPrimero(cJson* unJson){
 
     if(unJson->primero!=unJson->ultimo){
@@ -376,7 +372,7 @@ void liberarPrimero(cJson* unJson){
 
 }
 
-/** este va liberar lo hara hasta la muerte misma del json**/
+/** libera el json completamente**/
 void liberar(cJson* unJson){
 
     if(getStringValor(unJson->primero)){
@@ -395,7 +391,7 @@ void liberar(cJson* unJson){
 
 }
 
-/** el set que todos conocemos **/
+/** settea los atributos del Variant **/
 void setVariant( variant* v, void* unaClave, void* valor, unsigned largoClave, unsigned largo, unsigned tipo, unsigned elementos) {
     v->largo = largo;
     v->cantidadElementos = elementos;
