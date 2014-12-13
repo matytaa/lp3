@@ -133,7 +133,7 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 	if (unJson->primero) {
 
 		FILE *archivoJson;
-		archivoJson = fopen("archivoJson.txt", "a"); //fopen(argv[argc+1], "a");
+		archivoJson = fopen(argv[1], "a");
 		fprintf(archivoJson, "\n");
 		fprintf(archivoJson, "%s", "{\n");
 
@@ -345,18 +345,20 @@ void liberarPrimero(cJson* unJson){
 /** este va liberar lo hara hasta la muerte misma del json**/
 void liberar(cJson* unJson){
 
-    unJson->tamanioJson = 0;
-    while((unJson->primero)&&(getStringValor(unJson->primero))){
-        liberarPrimero(unJson);
+    if(getStringValor(unJson->primero)){
+        unJson->tamanioJson = 0;
+        while((unJson->primero)){
+            liberarPrimero(unJson);
+        }
+
+        if(unJson->primero)
+            free(unJson->primero);
+        if(unJson->ultimo)
+            free(unJson->ultimo);
     }
-
-    if(unJson->primero)
-        free(unJson->primero);
-    if(unJson->ultimo)
-        free(unJson->ultimo);
-
     unJson->primero = NULL;
     unJson->ultimo = NULL;
+
 }
 
 /** el set que todos conocemos **/
