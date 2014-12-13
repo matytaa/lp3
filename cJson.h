@@ -3,9 +3,9 @@
 
 /** Definición de la estructura Json en C
 **/
-#define vjson 1
+#define vjsoninicio 10
 
-#define vnull 2
+#define vjsonfinal 20
 #define ventero 3
 
 #define vflotante 4
