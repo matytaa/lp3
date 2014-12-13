@@ -241,10 +241,11 @@ void crearJson(int argc, char** argv){
     }
 
     liberar(unJson);
+    /** Compruebo que unJson esté liberado correctamente**/
     mostrarPorConsola(unJson);
-
+    
     liberar(otroJson);
-
+    /** Compruebo que otroJson esté liberado correctamente**/
     mostrarPorConsola(otroJson);
 }
 
