@@ -41,13 +41,13 @@ void mostrarPorConsola(cJson* unJson) {
 
 		while (auxIt) {
             unsigned auxiliarFinJson = auxIt->tipo;
-            if((auxIt->tipo > 10) && (auxIt->tipo < 20) ){
+            if((auxIt->tipo > vjsoninicio) && (auxIt->tipo < vjsonfinal) ){
                 printf("%s", "[\n");
-                auxIt->tipo -= 10;
+                auxIt->tipo -= vjsoninicio;
             }
 
-            if(auxIt->tipo > 20){
-                auxIt->tipo -= 20;
+            if(auxIt->tipo > vjsonfinal){
+                auxIt->tipo -= vjsonfinal;
             }
 
 			printf("\"%s\": ", getStringClave(auxIt));
@@ -80,7 +80,7 @@ void mostrarPorConsola(cJson* unJson) {
 				break;
 			}
 
-			if(auxiliarFinJson>20 ){
+			if(auxiliarFinJson>vjsonfinal ){
                 printf("\n%s", "]");
                 auxiliarFinJson = 0;
             }
@@ -159,13 +159,13 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 		while (auxIt) {
 
 			unsigned auxiliarFinJson = auxIt->tipo;
-            if((auxIt->tipo > 10) && (auxIt->tipo < 20) ){
+            if((auxIt->tipo > vjsoninicio) && (auxIt->tipo < vjsonfinal) ){
                 fprintf(archivoJson, "%s", "[\n");
-                auxIt->tipo -= 10;
+                auxIt->tipo -= vjsoninicio;
             }
 
-            if(auxIt->tipo > 20){
-                auxIt->tipo -= 20;
+            if(auxIt->tipo > vjsonfinal){
+                auxIt->tipo -= vjsonfinal;
             }
 
 			fprintf(archivoJson, "\"%s\": ", getStringClave(auxIt));
@@ -232,7 +232,7 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 				break;
 			}
 
-            if(auxiliarFinJson>20 ){
+            if(auxiliarFinJson>vjsonfinal ){
                 fprintf(archivoJson,"\n%s", "]");
                 auxiliarFinJson = 0;
             }
