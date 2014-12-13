@@ -8,6 +8,8 @@ void crearJson(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
+    /** damos valores a los parametros del argumento para hacer pruebas
+     * en caso de querer mostrar por consola hay que borrar la asignación**/
     argc = 2;
     char* a= "archivo.txt";
     argv[1]=a;
