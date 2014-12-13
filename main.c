@@ -8,12 +8,6 @@ void crearJson(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
-    /** damos valores a los parametros del argumento para hacer pruebas
-    en caso de querer mostrar por consola hay que borrar la asignación**/
-    argc = 2;
-    char* a= "archivo.txt";
-    argv[1]=a;
-
     crearJson(argc, argv);
     return 0;
 }
@@ -67,6 +61,7 @@ void crearJson(int argc, char** argv){
     setVariant(atributoDomicilio, claveDomicilio, valorDomicilio, largoClaveDomicilio,
                largoValorDomicilio, tipoDomicilio, elementosDomicilio);
 
+    /** asigno los primeros tres variant en unJson**/
     asignarJson(unJson, atributoDomicilio);
     asignarJson(unJson, atributoEdad);
     asignarJson(unJson, atributoNombre);
@@ -80,6 +75,8 @@ void crearJson(int argc, char** argv){
     void* valor = unArray;
     unsigned largoClave = strlen(clave)+1;
     unsigned tipo = 6;
+    variant* atributoNotas = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(atributoNotas);
 
     /** variant 5 **/
     unsigned cantidadElementosD = 5;
@@ -89,6 +86,8 @@ void crearJson(int argc, char** argv){
     void* valorD = unArrayD;
     unsigned largoClaveD = strlen(claveD)+1;
     unsigned tipoD = 7;
+    variant* atributoNotasDouble = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(atributoNotasDouble);
 
     /** variant 6 **/
     unsigned cantidadDeChar = 4;
@@ -98,19 +97,14 @@ void crearJson(int argc, char** argv){
     unsigned largoClaveDeptos = strlen(claveDeptos) + 1;
     unsigned largoValorDeptos = strlen(valorDeptos);
     unsigned tipoDepto= 8;
-
-    variant* atributoNotas = (variant*) malloc(sizeof(variant));
-    variant* atributoNotasDouble = (variant*) malloc(sizeof(variant));
     variant* atributoDeptos= (variant*) malloc(sizeof(variant));
-    inicializarAtributo(atributoNotas);
-    inicializarAtributo(atributoNotasDouble);
     inicializarAtributo(atributoDeptos);
 
     setVariant(atributoNotas, clave, valor, largoClave, largo, tipo, cantidadElementos);
     setVariant(atributoNotasDouble, claveD, valorD, largoClaveD, largoD, tipoD, cantidadElementosD);
     setVariant(atributoDeptos, claveDeptos, valorDeptos, largoClaveDeptos, largoValorDeptos, tipoDepto, cantidadDeChar);
 
-
+    /** asigno los variant en unJson**/
     asignarJson(unJson, atributoNotas);
     asignarJson(unJson, atributoNotasDouble);
     asignarJson(unJson, atributoDeptos);
@@ -157,11 +151,12 @@ void crearJson(int argc, char** argv){
     setVariant(atributoKm, claveKm, valorKm, largoClaveKm, largoValorKm, tipoKm, elementosKm);
 
 
-
+    /** asigno los variant en unJson**/
     asignarJson(unJson, atributoMarca);
     asignarJson(unJson, atributoModelo);
     asignarJson(unJson, atributoKm);
 
+    /** realizo unas bajas en unJson**/
     liberarPrimero(unJson);
     unJson->tamanioJson -= sizeof(variant);
     liberarPrimero(unJson);
@@ -226,14 +221,16 @@ void crearJson(int argc, char** argv){
                largoValorProvincia, tipoProvincia, elementosProvincia);
 
 
-
+    /** asigno los variant en unJson**/
     asignarJson(otroJson, atributoProvincia);
     asignarJson(otroJson, atributoHabitantes);
     asignarJson(otroJson, atributoLocalidad);
 
+    /** asigno otroJson en unJson**/
     asignarJsonDeJson(unJson, otroJson);
 
-    if(argc == 2){
+    /** el pasaje por parametros **/
+    if((argc == 2)&&(argv[1])){
         printf("Json almacenado en el archivo destino indicado\n");
         printf("%s\n", argv[1]);
         guardarArchivo(unJson,argc, argv);
@@ -243,10 +240,11 @@ void crearJson(int argc, char** argv){
     }
 
     liberar(unJson);
+    /** verifico que se haya liberado unJson **/
     mostrarPorConsola(unJson);
-
+    /** libero el otro Json, aunque ya no posee variant asignados **/
     liberar(otroJson);
-
+    /** verifico que se haya liberado otroJson **/
     mostrarPorConsola(otroJson);
 }
 
