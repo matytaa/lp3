@@ -40,6 +40,15 @@ void mostrarPorConsola(cJson* unJson) {
 		variant* auxIt = unJson->primero;
 
 		while (auxIt) {
+            unsigned auxiliarFinJson = auxIt->tipo;
+            if((auxIt->tipo > 10) && (auxIt->tipo < 20) ){
+                printf("%s", "[\n");
+                auxIt->tipo -= 10;
+            }
+
+            if(auxIt->tipo > 20){
+                auxIt->tipo -= 20;
+            }
 
 			printf("\"%s\": ", getStringClave(auxIt));
 
@@ -47,9 +56,7 @@ void mostrarPorConsola(cJson* unJson) {
 			unsigned elementos = getCantidadElemtos(auxIt);
 
 			switch (tipo) {
-			case vjson:
-				printf("[");
-                break;
+
 			case ventero:
 				printf("%i", getInteger(auxIt));
 				break;
@@ -72,6 +79,12 @@ void mostrarPorConsola(cJson* unJson) {
 				mostrarListaDeChar(auxIt, elementos);
 				break;
 			}
+
+			if(auxiliarFinJson>20 ){
+                printf("\n%s", "]");
+                auxiliarFinJson = 0;
+            }
+
 			auxIt = auxIt->siguiente;
 			if(auxIt){
                 printf(",");
@@ -133,8 +146,7 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 	if (unJson->primero) {
 
 		FILE *archivoJson;
-		archivoJson = fopen(argv[1], "a");
-		fprintf(archivoJson, "\n");
+		archivoJson = fopen(argv[1], "w");
 		fprintf(archivoJson, "%s", "{\n");
 
 		variant* auxIt = unJson->primero;
@@ -143,7 +155,19 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 		float* auxFloat = NULL;
 		char* auxChar = NULL;
 
+
 		while (auxIt) {
+
+			unsigned auxiliarFinJson = auxIt->tipo;
+            if((auxIt->tipo > 10) && (auxIt->tipo < 20) ){
+                fprintf(archivoJson, "%s", "[\n");
+                auxIt->tipo -= 10;
+            }
+
+            if(auxIt->tipo > 20){
+                auxIt->tipo -= 20;
+            }
+
 			fprintf(archivoJson, "\"%s\": ", getStringClave(auxIt));
 			unsigned tipo = getTipoElemento(auxIt);
 			unsigned elementos = getCantidadElemtos(auxIt);
@@ -207,6 +231,12 @@ void guardarArchivo(cJson* unJson, int argc, char** argv) {
 				auxChar = NULL;
 				break;
 			}
+
+            if(auxiliarFinJson>20 ){
+                fprintf(archivoJson,"\n%s", "]");
+                auxiliarFinJson = 0;
+            }
+
 			auxIt = auxIt->siguiente;
 			if(auxIt){
                 fprintf(archivoJson, "%s",",");
@@ -262,10 +292,14 @@ void asignarJsonDeJson( cJson* jsonAAsignar, cJson* unJson){
         return;
     }
     variant* auxIt = unJson->primero;
+    (auxIt->tipo) += vjsoninicio;
+
     asignarJson(jsonAAsignar, auxIt);
 
     while(auxIt->siguiente){
         auxIt = auxIt->siguiente;
+        if(!auxIt->siguiente)
+            auxIt->tipo += vjsonfinal;
         asignarJson(jsonAAsignar, auxIt);
     }
 
