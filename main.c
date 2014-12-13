@@ -4,23 +4,26 @@
 #include "cJSON.h"
 #include "cJSON.c"
 
-void crearJsonDeVariosAtributos(int argc, char** argv);
-void crearJsonArrayDeAtributos(int argc, char** argv);
-void eliminarAtributos(int argc, char** argv);
+void crearJson(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
-    crearJsonDeVariosAtributos(argc, argv);
-    crearJsonArrayDeAtributos(argc, argv);
-    eliminarAtributos(argc, argv);
+    argc = 2;
+    char* a= "archivo.txt";
+    argv[1]=a;
 
+    crearJson(argc, argv);
     return 0;
 }
 
-void crearJsonDeVariosAtributos(int argc, char** argv){
+void crearJson(int argc, char** argv){
 
     cJson* unJson = (cJson*) malloc(sizeof(cJson));
     inicializarJson(unJson);
+
+    cJson* otroJson = (cJson*) malloc(sizeof(cJson));
+    inicializarJson(otroJson);
+
 
     /** variant 1 **/
     char claveNombre[] = "nombre";
@@ -32,7 +35,6 @@ void crearJsonDeVariosAtributos(int argc, char** argv){
 
     variant* atributoNombre = (variant*) malloc(sizeof(variant));
     inicializarAtributo(atributoNombre);
-    setVariant(atributoNombre, claveNombre, valorNombre, largoClaveNombre, largoValorNombre, tipoNombre, elementosNombre);
 
 
     /** variant 2 **/
@@ -58,27 +60,15 @@ void crearJsonDeVariosAtributos(int argc, char** argv){
 
     variant* atributoDomicilio = (variant*) malloc(sizeof(variant));
     inicializarAtributo(atributoDomicilio);
+
+    setVariant(atributoNombre, claveNombre, valorNombre, largoClaveNombre, largoValorNombre, tipoNombre, elementosNombre);
     setVariant(atributoDomicilio, claveDomicilio, valorDomicilio, largoClaveDomicilio,
                largoValorDomicilio, tipoDomicilio, elementosDomicilio);
-
 
     asignarJson(unJson, atributoDomicilio);
     asignarJson(unJson, atributoEdad);
     asignarJson(unJson, atributoNombre);
 
-    if(strcmp(argv[argc-1],"-f") == 0){
-        guardarArchivo(unJson, argc, argv);
-    }else{
-        mostrarPorConsola(unJson);
-    }
-
-    liberar(unJson);
-}
-
-void crearJsonArrayDeAtributos(int argc, char** argv){
-
-    cJson* unJson = (cJson*) malloc(sizeof(cJson));
-    inicializarJson(unJson);
 
     /** variant 4 **/
     unsigned cantidadElementos=4;
@@ -123,22 +113,6 @@ void crearJsonArrayDeAtributos(int argc, char** argv){
     asignarJson(unJson, atributoNotasDouble);
     asignarJson(unJson, atributoDeptos);
 
-    //if(strcmp(argv[argc-1],"-f") == 0){
-        guardarArchivo(unJson,argc, argv);
-    //}else{
-        mostrarPorConsola(unJson);
-    //}
-
-    liberar(unJson);
-}
-
-void eliminarAtributos(int argc, char** argv){
-
-    cJson* unJson = (cJson*) malloc(sizeof(cJson));
-    inicializarJson(unJson);
-
-    cJson* otroJson = (cJson*) malloc(sizeof(cJson));
-    inicializarJson(otroJson);
 
     /** variant 7 **/
     char* claveMarca= "marca";
@@ -182,32 +156,30 @@ void eliminarAtributos(int argc, char** argv){
 
 
 
-
     asignarJson(unJson, atributoMarca);
     asignarJson(unJson, atributoModelo);
     asignarJson(unJson, atributoKm);
 
     liberarPrimero(unJson);
     unJson->tamanioJson -= sizeof(variant);
-    mostrarPorConsola(unJson);
     liberarPrimero(unJson);
     unJson->tamanioJson -= sizeof(variant);
 
 
     /** variant 10 **/
-    char* clave= "escuderia";
-    char* valor= "ferrari";
-    unsigned largo = strlen(valor)+1;
-    unsigned largoClave = strlen(clave)+1;
-    unsigned tipo = 5;
-    unsigned elementos = 1;
+    char* claveEscuderia= "escuderia";
+    char* valorEscuderia= "ferrari";
+    unsigned largoEscuderia = strlen(valorEscuderia)+1;
+    unsigned largoClaveEscuderia = strlen(claveEscuderia)+1;
+    unsigned tipoEscuderia = 5;
+    unsigned elementosEscuderia = 1;
 
-    variant* unAtributo = (variant*) malloc(sizeof(variant));
-    inicializarAtributo(unAtributo);
-    setVariant(unAtributo, clave, valor, largoClave, largo, tipo, elementos);
+    variant* unAtributoEscuderia = (variant*) malloc(sizeof(variant));
+    inicializarAtributo(unAtributoEscuderia);
+    setVariant(unAtributoEscuderia, claveEscuderia, valorEscuderia, largoClaveEscuderia
+               , largoEscuderia, tipoEscuderia, elementosEscuderia);
 
-    asignarJson(unJson, unAtributo);
-    mostrarPorConsola(unJson);
+    asignarJson(unJson, unAtributoEscuderia);
 
     /** variant 11 **/
     char claveLocalidad[] = "Localidad";
@@ -259,12 +231,20 @@ void eliminarAtributos(int argc, char** argv){
 
     asignarJsonDeJson(unJson, otroJson);
 
-    mostrarPorConsola(unJson);
+    if(argc == 2){
+        printf("Json almacenado en el archivo destino indicado\n");
+        printf("%s\n", argv[1]);
+        guardarArchivo(unJson,argc, argv);
+    }else{
+        printf("Salida estandar\n");
+        mostrarPorConsola(unJson);
+    }
 
     liberar(unJson);
     mostrarPorConsola(unJson);
 
     liberar(otroJson);
+
     mostrarPorConsola(otroJson);
 }
 
