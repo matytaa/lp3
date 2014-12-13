@@ -273,7 +273,7 @@ void asignarJsonDeJson( cJson* jsonAAsignar, cJson* unJson){
 }
 
 /** si uso este metodo debo decrementar a  mano el tamaño del json
-    ya que no tengo forma de acceder al json**/
+        ya que no tengo forma de acceder al json**/
 void liberarVariant(variant* variant) {
     variant->largo = 0;
     variant->cantidadElementos = 0;
@@ -292,51 +292,68 @@ void liberarVariant(variant* variant) {
     if((variant->anterior)&&(variant->siguiente)){
         variant->anterior->siguiente = variant->siguiente;
         variant->siguiente->anterior = variant->anterior;
-        return;
     }
     /** si quiero eliminar el ultimo variant cambia el puntero del
     ultimo variant, y dice que el nuevo ultimo es su anterior **/
     if((variant->anterior)&&(!variant->siguiente)){
         variant->anterior->siguiente = NULL;
-        return;
     }
 
     if((!variant->anterior)&&(variant->siguiente)){
         variant->siguiente->anterior = NULL;
-        return;
     }
-    free(variant->siguiente);
-    variant->siguiente = NULL;
+
+    if(variant->anterior)
+        free(variant->anterior);
+    if(variant->anterior)
+        free(variant->anterior);
+    variant->anterior=NULL;
+    variant->siguiente=NULL;
 }
+
 
 /** borro el contenido del 1er variant
     y cambia los punteros del json primero y/o ultimo
     al siguiente del 1er variant **/
 void liberarPrimero(cJson* unJson){
 
-
-    /** esto es si solo tengo un variant en el json **/
     if(unJson->primero!=unJson->ultimo){
         unJson->primero = unJson->primero->siguiente;
+        liberarVariant(unJson->primero->anterior);
         unJson->tamanioJson -= sizeof(variant);
-        return;
+
+        if(unJson->primero->anterior)
+            free(unJson->primero->anterior);
+        unJson->primero->anterior = NULL;
+
     }
-    liberarVariant(unJson->primero);
+    else{
+        unJson->tamanioJson = 0;
+        liberarVariant(unJson->primero);
+
+        if(unJson->primero)
+            free(unJson->primero);
+        unJson->primero = NULL;
+
+        if(unJson->ultimo)
+            free(unJson->ultimo);
+        unJson->ultimo = NULL;
+    }
+
 }
 
 /** este va liberar lo hara hasta la muerte misma del json**/
 void liberar(cJson* unJson){
-    unJson->tamanioJson = 0;
 
-    /**si se preguntan porque siempre borro el primero y cambio los punteros
-    es porque si voy borrando el ultimo hasta el primero se rompe todo**/
-    while(unJson->primero != unJson->ultimo){
+    unJson->tamanioJson = 0;
+    while((unJson->primero)&&(getStringValor(unJson->primero))){
         liberarPrimero(unJson);
     }
-    liberarPrimero(unJson);
 
-    free(unJson->primero);
-    free(unJson->ultimo);
+    if(unJson->primero)
+        free(unJson->primero);
+    if(unJson->ultimo)
+        free(unJson->ultimo);
 
     unJson->primero = NULL;
     unJson->ultimo = NULL;
